@@ -1,0 +1,150 @@
+<resources>
+    <string name="app_name">CareerNote - 就職・キャリア管理</string>
+    <string name="nav_home">ホーム</string>
+    <string name="nav_applications">応募状況</string>
+    <string name="nav_career">キャリア</string>
+    <string name="nav_report">レポート</string>
+    <string name="nav_settings">設定</string>
+
+    <string name="home_greeting">今日も一歩ずつ準備しましょうか？</string>
+    <string name="home_kpi_total_apps">総応募数</string>
+    <string name="home_kpi_ongoing">進行中</string>
+    <string name="home_kpi_doc_passed">書類通過</string>
+    <string name="home_kpi_final_passed">内정</string>
+
+    <string name="empty_applications">応募履歴がまだありません。\n最初の応募を登録してみましょう。</string>
+    <string name="add_application">応募登録</string>
+
+    <string name="career_cover_letter">自己紹介書</string>
+    <string name="career_resume">履歴書</string>
+    <string name="career_portfolio">ポートフォリオ</string>
+    <string name="career_project">プロジェクト</string>
+    <string name="career_certification">資格</string>
+    <string name="career_interview_question">面接質問</string>
+    <string name="career_experience">経歴</string>
+    <string name="career_education">教育</string>
+
+    <string name="btn_save">保存</string>
+    <string name="btn_cancel">キャンセル</string>
+    <string name="btn_delete">削除</string>
+    <string name="btn_add">記録する</string>
+    <string name="btn_edit">修正</string>
+
+    <string name="settings_theme">テーマ設定</string>
+    <string name="settings_language">言語設定</string>
+    <string name="settings_data_mgmt">データ管理</string>
+    <string name="settings_backup">データバックアップ</string>
+    <string name="settings_restore">データ復元</string>
+    <string name="settings_reset">すべてのデータを削除</string>
+
+    <string name="career_tips_title">CareerNote - 就職・キャリア管理</string>
+    <string name="career_tips_desc">採用動向から面接・転職まで一目で確認</string>
+    <string name="career_tips_badge">2026 就職ガイド</string>
+    <string name="career_tips_hero_title">就活準備、勘だけに頼らないでください</string>
+    <string name="career_tips_hero_desc">最近の採用動向から職種別ガイド、面接のコツまで必要な内容をまとめました。</string>
+    <string name="career_tips_market">採用・雇用動向</string>
+    <string name="career_tips_job_guide">職種別ガイド</string>
+    <string name="career_tips_interview">面접のコツ</string>
+    <string name="career_tips_career_change">転職のコツ</string>
+    <string name="career_tips_as_of">2026年7月時点</string>
+
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="theme_system">システム設定</string>
+
+    <string name="title_add_application">応募情報の登録</string>
+    <string name="label_company_name">会社名 *</string>
+    <string name="label_job_title">職種 *</string>
+    <string name="label_status">進行状況</string>
+    <string name="label_deadline">締切日または予定日</string>
+    <string name="msg_draft_loaded">一時保存された内容を読み込みました。</string>
+    <string name="btn_save_record">記録を保存する</string>
+    <string name="title_application_detail">応募詳細</string>
+    <string name="label_basic_info">基本情報</string>
+    <string name="label_status_schedule">状況とスケジュール</string>
+
+    <!-- Add Career Labels -->
+    <string name="title_edit_record">記録の修正</string>
+    <string name="title_new_record">新しい記録を追加</string>
+    <string name="label_cl_title">自己紹介書のタイトル *</string>
+    <string name="label_cl_company">応募先企業 *</string>
+    <string name="label_cl_content">設問と内容 *</string>
+    <string name="label_rs_title">履歴書のタイトル *</string>
+    <string name="label_rs_version">バージョン</string>
+    <string name="label_rs_memo">メモ</string>
+    <string name="label_pt_title">ポートフォリオのタイトル *</string>
+    <string name="label_pt_url">URL (リンク)</string>
+    <string name="label_pj_name">プロジェクト名 *</string>
+    <string name="label_pj_role">役割</string>
+    <string name="label_pj_tech">使用技術</string>
+    <string name="label_pj_action">詳細説明 (Action)</string>
+    <string name="label_pj_situation">問題状況 (Situation/Task)</string>
+    <string name="label_pj_result">結果・成果 (Result)</string>
+    <string name="label_cert_name">資格名 *</string>
+    <string name="label_cert_issuer">発行機関</string>
+    <string name="label_cert_score">スコア</string>
+    <string name="label_cert_grade">級・評価</string>
+    <string name="label_iq_category">カテゴリー</string>
+    <string name="label_iq_question">質問 *</string>
+    <string name="label_iq_answer">現在の回答 *</string>
+    <string name="label_iq_better">改善された回答</string>
+    <string name="label_exp_company">会社名 *</string>
+    <string name="label_exp_job">職種 *</string>
+    <string name="label_exp_work">主な業務</string>
+    <string name="label_exp_outcome">成果</string>
+    <string name="label_edu_name">教育・専攻名 *</string>
+    <string name="label_edu_inst">機関・学校名 *</string>
+    <string name="label_edu_status">状態 (卒業・修了など)</string>
+    <string name="label_edu_desc">詳細内容</string>
+    <string name="btn_save_complete">保存完了</string>
+
+    <string name="label_start_date">開始日</string>
+    <string name="label_end_date">終了日</string>
+    <string name="label_acquired_date">取得日</string>
+    <string name="label_currently_working">現在在職中</string>
+    <string name="msg_no_record_found">記録が見つかりません。</string>
+
+    <!-- Application Detail Labels -->
+    <string name="label_schedule">スケジュール</string>
+    <string name="label_applied_date">応募日</string>
+    <string name="label_deadline_date">締切日</string>
+    <string name="label_docs">提出書類</string>
+    <string name="label_attached_pdf">添付PDF</string>
+    <string name="label_interviews">面接日程</string>
+    <string name="label_links_memo">関連リンクとメモ</string>
+    <string name="label_notice_url">求人URL</string>
+    <string name="label_memo_content">メモ</string>
+    <string name="btn_edit_info">情報を修正</string>
+    <string name="btn_delete_all">すべて削除</string>
+
+    <!-- Career Detail Labels -->
+    <string name="label_item_title">タイトル</string>
+    <string name="label_item_company">会社名</string>
+    <string name="label_item_content">内容</string>
+    <string name="label_item_version">バージョン</string>
+    <string name="label_item_memo">メモ</string>
+    <string name="label_item_url">URL</string>
+    <string name="label_item_pj_name">プロジェクト名</string>
+    <string name="label_item_role">役割</string>
+    <string name="label_item_tech">使用技術</string>
+    <string name="label_item_action">詳細説明 (Action)</string>
+    <string name="label_item_situation">問題状況 (Situation/Task)</string>
+    <string name="label_item_result">成果 (Result)</string>
+    <string name="label_item_cert_name">資格名</string>
+    <string name="label_item_issuer">発行機関</string>
+    <string name="label_item_score_grade">スコア/評価</string>
+    <string name="label_item_acquired_date">取得日</string>
+    <string name="label_item_category">カテゴリー</string>
+    <string name="label_item_question">質問</string>
+    <string name="label_item_my_answer">私の回答</string>
+    <string name="label_item_better_answer">より良い回答</string>
+    <string name="label_item_job">職種</string>
+    <string name="label_item_period">期間</string>
+    <string name="label_item_work">主な業務</string>
+    <string name="label_item_outcome">成果</string>
+    <string name="label_item_edu_major">教育・専攻</string>
+    <string name="label_item_inst">機関・学校</string>
+    <string name="label_item_status">状態</string>
+    <string name="label_item_detail">詳細内容</string>
+    <string name="msg_delete_confirm">この記録を削除してもよろしいですか？応募履歴に保存されたスナップショットは維持されます。</string>
+</resources>

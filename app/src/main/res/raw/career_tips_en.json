@@ -1,0 +1,52 @@
+[
+  {
+    "id": "m1", "category": "MARKET", "title": "July Job Market Summary", "badge": "2026.07", "order": 1,
+    "body": "In July 2026, the total number of employed persons increased by 108,000 YoY. The employment rate for ages 15-64 also rose by 0.1%p to 70.3%.\n\nHowever, the situation is different for the youth. The youth employment rate (ages 15-29) was 44.2%, down 1.6%p YoY.\n\nWhile the overall market isn't collapsing, first-time job seekers may find it harder than the average stats suggest.\n\nSectoral gaps are also wide: growth in services, but continued decline in manufacturing and construction.\n\n### Summary\nOverall employment is holding up, but youth and certain industries face ongoing challenges.",
+    "source": "Ministry of Employment and Labor · 2026.07 Trends"
+  },
+  {
+    "id": "m2", "category": "MARKET", "title": "Core Employment Indicators", "badge": "Official Stats", "order": 2,
+    "body": "■ Total Employed: 29.14M (+108K)\nThe actual number of people working. While it increased, the distribution across industries is uneven.\n\n■ 15-64 Employment Rate: 70.3% (+0.1%p)\nBased on OECD standards. The overall labor market remains relatively stable.\n\n■ Unemployment Rate: 2.6% (+0.2%p)\nLow unemployment doesn't always mean easy hiring, as those who stop searching are excluded from this stat.\n\n■ Labor Force Participation: 65.0% (Unchanged)\nPercentage of population aged 15+ who are either working or actively seeking work.",
+    "source": "Ministry of Employment and Labor"
+  },
+  {
+    "id": "m3", "category": "MARKET", "title": "Youth Metrics to Watch", "badge": "In-depth", "order": 3,
+    "body": "■ Youth Employment Rate: 44.2% (-1.6%p)\nOverall rate rose, but youth rate fell due to reduced hiring and a strong preference for experienced workers.\n\n■ Youth 'Not in Labor Force': 367K (-69K)\nRefers to those resting without specific activity. Decreasing for 6 months, but must be viewed alongside the employment rate drop.\n\n### Seekers' Perspective\nDon't blame only yourself for bad results; sometimes the market is just tough. Adapt by widening your target roles and focusing on specific skill requirements.",
+    "source": "Statistics Korea"
+  },
+  {
+    "id": "m4", "category": "MARKET", "title": "Hiring by Industry", "badge": "Trends", "order": 4,
+    "body": "■ Services (+295K)\n- Healthcare/Social Work (+173K)\n- Public Admin (+46K)\n- Finance/Insurance (+34K)\n- Prof/Scientific/Tech (-44K)\n\n■ Manufacturing (-68K)\nDecline continues but at a slower pace. Growth in Electronics/Comm, decline in Textiles/Autos.\n\n■ Construction (-5.7K)\nWeakness persists, though the rate of decline has slowed slightly.",
+    "source": "Ministry of Employment and Labor"
+  },
+  {
+    "id": "j1", "category": "JOB_GUIDE", "title": "Service Planning / PM", "subtitle": "Architects of Business Value", "badge": "Core Job", "order": 10,
+    "body": "■ Responsibilities\nConnecting user problems with business goals to decide what to build and improve.\n\n■ Key Tasks\n- Identifying user pain points and defining requirements\n- Designing user flows (Wireframing)\n- Coordinating dev/design schedules\n- Analyzing data post-launch\n\n■ Key Skills\n- Logical thinking and problem definition\n- Data literacy (SQL, GA4)\n- Communication and collaboration\n\n■ Portfolio Tip\nShow the flow: Problem → Evidence → Hypothesis → Planning → Execution → Result → Reflection.",
+    "source": "CareerNote - Job & Career Management"
+  },
+  {
+    "id": "j2", "category": "JOB_GUIDE", "title": "Android Development", "subtitle": "Implementing Mobile Experiences", "badge": "Technical", "order": 11,
+    "body": "■ Responsibilities\nDeveloping and operating applications for the Android smartphone environment.\n\n■ Key Skills\n- Proficiency in Kotlin\n- UI design with Jetpack Compose or XML\n- Modern architecture: ViewModel, Coroutine, Flow\n- REST API and DB (Room) usage\n\n■ Portfolio Tip\nWrite a great GitHub README. Emphasize why you chose certain technologies and how you solved specific bugs.",
+    "source": "CareerNote - Job & Career Management"
+  },
+  {
+    "id": "i1", "category": "INTERVIEW", "title": "D-3 to D-1 Checklist", "badge": "Strategy", "order": 20,
+    "body": "■ Research\nUnderstand your role in the business rather than just memorizing company history.\n\n■ Re-read Job Posting\nConnect one specific experience to each key responsibility and required skill listed.\n\n■ D-1 Checklist\n- Review your resume/cover letter\n- Practice 1-min intro & motivation\n- Prepare 3 reverse questions\n- Check equipment for online interviews",
+    "source": "CareerNote - Job & Career Management"
+  },
+  {
+    "id": "i2", "category": "INTERVIEW", "title": "The STAR Structure", "badge": "Strategy", "order": 21,
+    "body": "Follow this for behavioral interview questions:\n\n■ S (Situation): What was the context?\n■ T (Task): What was your role and the problem?\n■ A (Action): What specific actions did YOU take?\n■ R (Result): What was the outcome? (Quantified if possible)\n\nNote: Many guides emphasize providing evidence and metrics for your results.",
+    "source": "Hiring Guides"
+  },
+  {
+    "id": "c1", "category": "CAREER_CHANGE", "title": "First Step to Successful Change", "badge": "Strategy", "order": 30,
+    "body": "### Positive Reframing of Reasons\nBad: 'My previous company was a mess.'\nGood: 'I achieved X in my current role, and I want to contribute to your growth environment.'\n\n■ Record Habits\nDon't prep only when quitting. Update your solved problems, metrics, and tools every quarter.\n\n■ Quantify Achievements\nInstead of 'Responded to customer queries,' use 'Reduced repetitive queries by 24% through FAQ reorganization.'",
+    "source": "CareerNote - Job & Career Management"
+  },
+  {
+    "id": "t1", "category": "MARKET", "title": "Common Job Terms", "badge": "Basics", "order": 100,
+    "body": "### JD (Job Description)\nContent explaining the role and requirements in a job posting.\n\n### Onboarding\nThe process of helping new hires adapt to the organization.\n\n### KPI (Key Performance Indicator)\nMetrics used to evaluate the success of an organization or activity.\n\n### JD vs. Resume\nJD is what they want; Resume is what you have. Matching them is the key.",
+    "source": "CareerNote - Job & Career Management"
+  }
+]

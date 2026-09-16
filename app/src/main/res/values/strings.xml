@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">커리어노트 - 취업·경력관리</string>
+    <string name="nav_home">홈</string>
+    <string name="nav_applications">지원</string>
+    <string name="nav_career">커리어</string>
+    <string name="nav_report">리포트</string>
+    <string name="nav_settings">설정</string>
+
+    <string name="home_greeting">오늘도 한 걸음씩 준비해볼까요?</string>
+    <string name="home_kpi_total_apps">총 지원</string>
+    <string name="home_kpi_ongoing">진행 중</string>
+    <string name="home_kpi_doc_passed">서류 합격</string>
+    <string name="home_kpi_final_passed">최종 합격</string>
+
+    <string name="empty_applications">아직 지원 기록이 없습니다.\n첫 지원 기록을 추가해보세요.</string>
+    <string name="add_application">지원 등록</string>
+
+    <string name="career_cover_letter">자기소개서</string>
+    <string name="career_resume">이력서</string>
+    <string name="career_portfolio">포트폴리오</string>
+    <string name="career_project">프로젝트</string>
+    <string name="career_certification">자격증</string>
+    <string name="career_interview_question">면접 질문</string>
+    <string name="career_experience">경력</string>
+    <string name="career_education">교육</string>
+
+    <string name="btn_save">저장</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_delete">삭제</string>
+    <string name="btn_add">기록하기</string>
+    <string name="btn_edit">수정</string>
+
+    <string name="settings_theme">테마 설정</string>
+    <string name="settings_language">언어 설정</string>
+    <string name="settings_data_mgmt">데이터 관리</string>
+    <string name="settings_backup">데이터 백업</string>
+    <string name="settings_restore">데이터 복원</string>
+    <string name="settings_reset">모든 데이터 삭제</string>
+
+    <string name="career_tips_title">커리어노트 - 취업·경력관리</string>
+    <string name="career_tips_desc">채용 흐름부터 면접·이직까지 한 번에 확인해보세요</string>
+    <string name="career_tips_badge">2026 취업 가이드</string>
+    <string name="career_tips_hero_title">취업 준비, 감으로만 하지 마세요</string>
+    <string name="career_tips_hero_desc">최근 고용 흐름부터 직무 준비, 면접, 이직까지 필요한 내용만 정리했어요.</string>
+    <string name="career_tips_market">채용 흐름</string>
+    <string name="career_tips_job_guide">직무 가이드</string>
+    <string name="career_tips_interview">면접 꿀팁</string>
+    <string name="career_tips_career_change">이직 꿀팁</string>
+    <string name="career_tips_as_of">2026.07 기준</string>
+
+    <string name="theme_light">라이트 모드</string>
+    <string name="theme_dark">다크 모드</string>
+    <string name="theme_system">시스템 설정</string>
+    <string name="title_add_application">지원 정보 등록</string>
+    <string name="label_company_name">회사명 *</string>
+    <string name="label_job_title">직무 *</string>
+    <string name="label_status">진행 상태</string>
+    <string name="label_deadline">마감일 또는 예정일</string>
+    <string name="msg_draft_loaded">임시 저장된 내용을 불러왔습니다.</string>
+    <string name="btn_save_record">기록 저장하기</string>
+    <string name="title_application_detail">지원 상세</string>
+    <string name="label_basic_info">기본 정보</string>
+    <string name="label_status_schedule">상태 및 일정</string>
+
+    <!-- Add Career Labels -->
+    <string name="title_edit_record">기록 수정</string>
+    <string name="title_new_record">새 기록 추가</string>
+    <string name="label_cl_title">자소서 제목 *</string>
+    <string name="label_cl_company">지원 회사 *</string>
+    <string name="label_cl_content">문항 및 내용 *</string>
+    <string name="label_rs_title">이력서 제목 *</string>
+    <string name="label_rs_version">버전</string>
+    <string name="label_rs_memo">메모</string>
+    <string name="label_pt_title">포트폴리오 제목 *</string>
+    <string name="label_pt_url">URL (링크)</string>
+    <string name="label_pj_name">프로젝트명 *</string>
+    <string name="label_pj_role">나의 역할</string>
+    <string name="label_pj_tech">사용 기술</string>
+    <string name="label_pj_action">상세 설명 (Action)</string>
+    <string name="label_pj_situation">문제 상황 (Situation/Task)</string>
+    <string name="label_pj_result">결과 및 성과 (Result)</string>
+    <string name="label_cert_name">자격증명 *</string>
+    <string name="label_cert_issuer">발행 기관</string>
+    <string name="label_cert_score">점수</string>
+    <string name="label_cert_grade">등급</string>
+    <string name="label_iq_category">카테고리</string>
+    <string name="label_iq_question">질문 *</string>
+    <string name="label_iq_answer">현재 답변 *</string>
+    <string name="label_iq_better">개선된 답변</string>
+    <string name="label_exp_company">회사명 *</string>
+    <string name="label_exp_job">직무 *</string>
+    <string name="label_exp_work">주요 업무</string>
+    <string name="label_exp_outcome">성과</string>
+    <string name="label_edu_name">교육/전공명 *</string>
+    <string name="label_edu_inst">기관/학교명 *</string>
+    <string name="label_edu_status">상태 (졸업/수료 등)</string>
+    <string name="label_edu_desc">상세 내용</string>
+    <string name="btn_save_complete">저장 완료</string>
+
+    <string name="label_start_date">시작일</string>
+    <string name="label_end_date">종료일</string>
+    <string name="label_acquired_date">취득일</string>
+    <string name="label_currently_working">현재 재직 중</string>
+    <string name="msg_no_record_found">기록을 찾을 수 없습니다.</string>
+
+    <!-- Application Detail Labels -->
+    <string name="label_schedule">일정</string>
+    <string name="label_applied_date">지원일</string>
+    <string name="label_deadline_date">마감일</string>
+    <string name="label_docs">제출 서류</string>
+    <string name="label_attached_pdf">첨부 PDF</string>
+    <string name="label_interviews">면접 일정</string>
+    <string name="label_links_memo">관련 링크 및 메모</string>
+    <string name="label_notice_url">공고 링크</string>
+    <string name="label_memo_content">메모</string>
+    <string name="btn_edit_info">정보 수정</string>
+    <string name="btn_delete_all">전체 삭제</string>
+
+    <!-- Career Detail Labels -->
+    <string name="label_item_title">제목</string>
+    <string name="label_item_company">회사명</string>
+    <string name="label_item_content">내용</string>
+    <string name="label_item_version">버전</string>
+    <string name="label_item_memo">메모</string>
+    <string name="label_item_url">URL</string>
+    <string name="label_item_pj_name">프로젝트명</string>
+    <string name="label_item_role">역할</string>
+    <string name="label_item_tech">기술 스택</string>
+    <string name="label_item_action">상세 설명 (Action)</string>
+    <string name="label_item_situation">문제 상황 (Situation/Task)</string>
+    <string name="label_item_result">성과 (Result)</string>
+    <string name="label_item_cert_name">자격증명</string>
+    <string name="label_item_issuer">기관</string>
+    <string name="label_item_score_grade">점수/등급</string>
+    <string name="label_item_acquired_date">취득일</string>
+    <string name="label_item_category">카테고리</string>
+    <string name="label_item_question">질문</string>
+    <string name="label_item_my_answer">나의 답변</string>
+    <string name="label_item_better_answer">더 나은 답변</string>
+    <string name="label_item_job">직무</string>
+    <string name="label_item_period">기간</string>
+    <string name="label_item_work">주요 업무</string>
+    <string name="label_item_outcome">성과</string>
+    <string name="label_item_edu_major">교육/전공</string>
+    <string name="label_item_inst">기관/학교</string>
+    <string name="label_item_status">상태</string>
+    <string name="label_item_detail">상세 내용</string>
+    <string name="msg_delete_confirm">이 기록을 정말 삭제하시겠습니까? 연결된 제출 이력의 스냅샷은 유지됩니다.</string>
+</resources>
