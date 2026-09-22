@@ -42,7 +42,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
-    
+
     // Notification Permission for Android 13+
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
         val permissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
@@ -52,7 +52,7 @@ fun HomeScreen(
                 // Handle denial
             }
         }
-        
+
         LaunchedEffect(Unit) {
             val status = androidx.core.content.ContextCompat.checkSelfPermission(
                 context,
@@ -171,7 +171,7 @@ fun HomeScreen(
                     fontWeight = FontWeight.ExtraBold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 if (uiState.upcomingDeadlines.isEmpty()) {
                     // Empty State for D-Day
                     Card(
@@ -233,10 +233,12 @@ fun HomeScreen(
 @Composable
 fun HomeDeadlineCard(app: Application, onClick: () -> Unit) {
     val dDayTextInfo = app.deadlineDate?.let { date ->
-        val targetDate = date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+        val targetDate = java.time.Instant.ofEpochMilli(date.time)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDate()
         val today = java.time.LocalDate.now()
         val diff = java.time.temporal.ChronoUnit.DAYS.between(today, targetDate)
-        
+
         when {
             diff < 0 -> "마감" to Color.Gray
             diff == 0L -> "D-Day" to Color(0xFFFF5252)
@@ -244,7 +246,7 @@ fun HomeDeadlineCard(app: Application, onClick: () -> Unit) {
             else -> "D-$diff" to Color(0xFF2196F3)
         }
     } ?: ("상시" to Color(0xFF2196F3))
-    
+
     val dDayText = dDayTextInfo.first
     val dDayColor = dDayTextInfo.second
 
@@ -337,8 +339,21 @@ fun HomeTipCard(tip: CareerTip, onClick: () -> Unit) {
                     fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.height(6.dp))
+                val previewText = remember(tip.body) {
+                    tip.body.split("\n")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .map { line ->
+                            line.replace(Regex("^###\\s*"), "")
+                                .replace(Regex("^■\\s*"), "")
+                                .replace(Regex("^[-•①②③④⑤]\\s*"), "")
+                                .trim()
+                        }
+                        .firstOrNull { it.isNotEmpty() }
+                        ?: tip.body.take(100).replace("\n", " ")
+                }
                 Text(
-                    text = tip.body.split("\n").firstOrNull() ?: "",
+                    text = previewText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                     maxLines = 1,

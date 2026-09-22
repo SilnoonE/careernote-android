@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,7 @@ fun MainContainer(
     }
 
     val currentRoute = currentDestination?.route ?: ""
+    val context = LocalContext.current
     val bottomNavItem = bottomNavItems.find { screen -> currentRoute == screen.route }
     val isTopLevelDestination = bottomNavItems.any { it.route == currentRoute }
 
@@ -62,11 +64,20 @@ fun MainContainer(
         currentRoute.startsWith("application_detail") -> stringResource(R.string.title_application_detail)
         currentRoute.startsWith("career_list") -> {
             val titleResId = navBackStackEntry?.arguments?.getString("titleResId")?.toIntOrNull() ?: 0
-            if (titleResId != 0) stringResource(titleResId) else "커리어 목록"
+            val resTitle = remember(titleResId) {
+                if (titleResId != 0) {
+                    try { context.getString(titleResId) } catch (_: Exception) { null }
+                } else null
+            }
+            resTitle ?: "커리어 목록"
         }
         currentRoute.startsWith("add_career") -> {
             val titleResId = navBackStackEntry?.arguments?.getString("titleResId")?.toIntOrNull() ?: 0
-            val prefix = if (titleResId != 0) stringResource(titleResId) else "커리어"
+            val prefix = remember(titleResId) {
+                if (titleResId != 0) {
+                    try { context.getString(titleResId) } catch (_: Exception) { null }
+                } else null
+            } ?: "커리어"
             "$prefix 기록"
         }
         currentRoute.startsWith("career_detail") -> "상세 보기"
@@ -76,38 +87,35 @@ fun MainContainer(
     Scaffold(
         topBar = {
             if (isTopLevelDestination) {
-                Surface(
-                    tonalElevation = 8.dp,
-                    shadowElevation = 8.dp,
-                    color = MaterialTheme.colorScheme.primary
-                ) {
-                    CenterAlignedTopAppBar(
-                        title = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (currentRoute == Screen.Home.route) {
-                                    Icon(
-                                        imageVector = Icons.Default.Stars,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp),
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                }
-                                Text(
-                                    text = title,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    letterSpacing = 0.5.sp
+                CenterAlignedTopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 12.dp) // Lower for stability
+                        ) {
+                            if (currentRoute == Screen.Home.route) {
+                                Icon(
+                                    imageVector = Icons.Default.Stars,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimary
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
                             }
-                        },
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        windowInsets = WindowInsets(0, 0, 0, 0)
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                     )
-                }
+                )
             }
         },
         bottomBar = {
@@ -124,18 +132,18 @@ fun MainContainer(
                         bottomNavItems.forEach { screen ->
                             val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
                             NavigationBarItem(
-                                icon = { 
+                                icon = {
                                     Icon(
-                                        imageVector = screen.icon, 
+                                        imageVector = screen.icon,
                                         contentDescription = null,
                                         modifier = Modifier.size(24.dp)
-                                    ) 
+                                    )
                                 },
-                                label = { 
+                                label = {
                                     Text(
                                         text = stringResource(screen.titleResId),
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                                    ) 
+                                    )
                                 },
                                 selected = selected,
                                 onClick = {

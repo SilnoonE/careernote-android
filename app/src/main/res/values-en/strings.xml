@@ -147,4 +147,8 @@
     <string name="label_item_status">Status</string>
     <string name="label_item_detail">Detail</string>
     <string name="msg_delete_confirm">Are you sure you want to delete this record? Snapshots in application history will be preserved.</string>
+
+    <string name="sort_applied_date">Applied Date</string>
+    <string name="sort_deadline_date">Deadline</string>
+    <string name="sort_updated_at">Updated At</string>
 </resources>

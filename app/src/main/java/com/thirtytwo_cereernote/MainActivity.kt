@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         handleIntent(intent)
     }
 
@@ -32,12 +32,12 @@ class MainActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", -1L)
         val type = intent.getStringExtra("type")
         val extraId = intent.getLongExtra("extraId", -1L)
-        
+
         // Clear extras to prevent re-handling on config change
         intent.removeExtra("id")
         intent.removeExtra("type")
         intent.removeExtra("extraId")
-        
+
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val language by settingsViewModel.language.collectAsState()
@@ -52,11 +52,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            val darkTheme = when(theme) {
-                "dark" -> true
-                "light" -> false
-                else -> androidx.compose.foundation.isSystemInDarkTheme()
-            }
+            val darkTheme = theme == "dark"
 
             key(language, theme) {
                 CareerNoteTheme(darkTheme = darkTheme) {

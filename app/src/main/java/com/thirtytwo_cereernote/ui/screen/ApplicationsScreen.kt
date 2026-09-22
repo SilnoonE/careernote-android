@@ -10,10 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thirtytwo_cereernote.R
-import com.thirtytwo_cereernote.data.model.ApplicationStatus
+import com.thirtytwo_cereernote.data.model.ApplicationFilterGroup
 import com.thirtytwo_cereernote.ui.component.ApplicationCard
 import com.thirtytwo_cereernote.viewmodel.ApplicationsViewModel
 
@@ -36,8 +33,7 @@ fun ApplicationsScreen(
     val applications by viewModel.applications.collectAsState()
     val isInitialEmpty by viewModel.isInitialEmpty.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val statusFilter by viewModel.statusFilter.collectAsState()
-    val favoriteFilter by viewModel.favoriteFilter.collectAsState()
+    val filterGroup by viewModel.filterGroup.collectAsState()
     val sortBy by viewModel.sortBy.collectAsState()
 
     var showSortMenu by remember { mutableStateOf(false) }
@@ -64,35 +60,43 @@ fun ApplicationsScreen(
                     singleLine = true
                 )
 
-                // Filters Row
+                // Filters Row (Simplified)
                 LazyRow(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    item {
+                    items(ApplicationFilterGroup.entries) { group ->
                         FilterChip(
-                            selected = favoriteFilter,
-                            onClick = { viewModel.favoriteFilter.value = !favoriteFilter },
-                            label = { Text("관심 기업") },
-                            leadingIcon = if (favoriteFilter) {
-                                { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                            } else null
-                        )
-                    }
-                    
-                    items(ApplicationStatus.entries) { status ->
-                        FilterChip(
-                            selected = statusFilter == status,
-                            onClick = {
-                                viewModel.statusFilter.value = if (statusFilter == status) null else status
-                            },
-                            label = { Text(status.displayName) }
+                            selected = filterGroup == group,
+                            onClick = { viewModel.filterGroup.value = group },
+                            label = { Text(group.displayName, style = MaterialTheme.typography.labelLarge) },
+                            leadingIcon = if (group == ApplicationFilterGroup.FAVORITE) {
+                                {
+                                    Icon(
+                                        imageVector = if (filterGroup == group) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                        tint = if (filterGroup == group) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            } else null,
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            ),
+                            shape = RoundedCornerShape(20.dp),
+                            border = FilterChipDefaults.filterChipBorder(
+                                enabled = true,
+                                selected = filterGroup == group,
+                                borderColor = MaterialTheme.colorScheme.outlineVariant,
+                                selectedBorderColor = MaterialTheme.colorScheme.primary
+                            )
                         )
                     }
                 }
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.End,
@@ -100,9 +104,9 @@ fun ApplicationsScreen(
                 ) {
                     Text(
                         text = when(sortBy) {
-                            "appliedDate" -> "지원일순"
-                            "deadlineDate" -> "마감일순"
-                            "updatedAt" -> "수정일순"
+                            "appliedDate" -> stringResource(R.string.sort_applied_date)
+                            "deadlineDate" -> stringResource(R.string.sort_deadline_date)
+                            "updatedAt" -> stringResource(R.string.sort_updated_at)
                             else -> "정렬"
                         },
                         style = MaterialTheme.typography.labelMedium,
@@ -112,9 +116,18 @@ fun ApplicationsScreen(
                         Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "정렬", modifier = Modifier.size(20.dp))
                     }
                     DropdownMenu(expanded = showSortMenu, onDismissRequest = { showSortMenu = false }) {
-                        DropdownMenuItem(text = { Text("지원일순") }, onClick = { viewModel.sortBy.value = "appliedDate"; showSortMenu = false })
-                        DropdownMenuItem(text = { Text("마감일순") }, onClick = { viewModel.sortBy.value = "deadlineDate"; showSortMenu = false })
-                        DropdownMenuItem(text = { Text("수정일순") }, onClick = { viewModel.sortBy.value = "updatedAt"; showSortMenu = false })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.sort_applied_date)) },
+                            onClick = { viewModel.sortBy.value = "appliedDate"; showSortMenu = false }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.sort_deadline_date)) },
+                            onClick = { viewModel.sortBy.value = "deadlineDate"; showSortMenu = false }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.sort_updated_at)) },
+                            onClick = { viewModel.sortBy.value = "updatedAt"; showSortMenu = false }
+                        )
                     }
                 }
                 HorizontalDivider(modifier = Modifier.padding(top = 4.dp), thickness = 0.5.dp)

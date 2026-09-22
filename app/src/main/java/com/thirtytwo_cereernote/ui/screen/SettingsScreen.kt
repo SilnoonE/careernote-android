@@ -44,7 +44,7 @@ fun SettingsScreen(
             viewModel.backupData(it) { success ->
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        if (success) "성공적으로 백업되었습니다." 
+                        if (success) "성공적으로 백업되었습니다."
                         else "백업에 실패했습니다."
                     )
                 }
@@ -151,12 +151,12 @@ fun SettingsScreen(
                         headlineContent = { Text(stringResource(R.string.settings_theme)) },
                         trailingContent = { Text(when(currentTheme) {
                             "dark" -> stringResource(R.string.theme_dark)
-                            else -> stringResource(R.string.theme_system)
+                            else -> stringResource(R.string.theme_light)
                         }) },
                         modifier = Modifier.clickable { showThemeDialog = true }
                     )
                 }
-                
+
                 item {
                     HorizontalDivider()
                     Text(text = stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -176,17 +176,17 @@ fun SettingsScreen(
                     Text(text = stringResource(R.string.settings_data_mgmt), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Column {
                         TextButton(
-                            onClick = { 
+                            onClick = {
                                 backupLauncher.launch("careernote_backup_${System.currentTimeMillis()}.zip")
-                            }, 
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(stringResource(R.string.settings_backup), modifier = Modifier.fillMaxWidth())
                         }
                         TextButton(
-                            onClick = { 
+                            onClick = {
                                 restoreLauncher.launch(arrayOf("application/zip", "application/x-zip-compressed", "application/octet-stream"))
-                            }, 
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(stringResource(R.string.settings_restore), modifier = Modifier.fillMaxWidth())
@@ -205,7 +205,7 @@ fun SettingsScreen(
             }
         }
     }
-    
+
     if (showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
@@ -235,7 +235,7 @@ fun SettingsScreen(
             }
         )
     }
-    
+
     if (showLanguageDialog) {
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
@@ -273,9 +273,8 @@ fun SettingsScreen(
             text = {
                 Column {
                     listOf(
-                        "system" to stringResource(R.string.theme_system),
-                        "dark" to stringResource(R.string.theme_dark),
-                        "light" to stringResource(R.string.theme_light)
+                        "light" to stringResource(R.string.theme_light),
+                        "dark" to stringResource(R.string.theme_dark)
                     ).forEach { (code, label) ->
                         Row(
                             modifier = Modifier

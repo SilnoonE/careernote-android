@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thirtytwo_cereernote.R
@@ -44,7 +46,7 @@ fun AddCareerScreen(
     var field7 by rememberSaveable { mutableStateOf("") }
     var field8 by rememberSaveable { mutableStateOf("") }
     var field9 by rememberSaveable { mutableStateOf("") }
-    
+
     var field1Error by remember { mutableStateOf(false) }
     var field2Error by remember { mutableStateOf(false) }
     var field3Error by remember { mutableStateOf(false) }
@@ -123,12 +125,27 @@ fun AddCareerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(if (itemId > 0) R.string.title_edit_record else R.string.title_new_record)) },
+                title = {
+                    Text(
+                        stringResource(if (itemId > 0) R.string.title_edit_record else R.string.title_new_record),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -148,7 +165,7 @@ fun AddCareerScreen(
                 if (currentDraft != null && itemId == 0L) {
                     Text(text = stringResource(R.string.msg_draft_loaded), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                 }
-                
+
                 when (id) {
                     "cover_letter" -> {
                         OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_cl_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
@@ -178,7 +195,7 @@ fun AddCareerScreen(
                         OutlinedTextField(value = field2, onValueChange = { field2 = it }, label = { Text(stringResource(R.string.label_cert_issuer)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field3, onValueChange = { field3 = it }, label = { Text(stringResource(R.string.label_cert_score)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field4, onValueChange = { field4 = it }, label = { Text(stringResource(R.string.label_cert_grade)) }, modifier = Modifier.fillMaxWidth())
-                        
+
                         DatePickerField(label = stringResource(R.string.label_acquired_date), value = field5, onValueChange = { field5 = it }, dateFormat = dateFormat)
                     }
                     "interview_question" -> {
@@ -190,7 +207,7 @@ fun AddCareerScreen(
                     "experience" -> {
                         OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_exp_company)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_exp_job)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
-                        
+
                         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = field7 == "true", onCheckedChange = { field7 = it.toString() })
                             Text(stringResource(R.string.label_currently_working))
@@ -207,7 +224,7 @@ fun AddCareerScreen(
                     "education" -> {
                         OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_edu_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_edu_inst)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
-                        
+
                         DatePickerField(label = stringResource(R.string.label_start_date), value = field5, onValueChange = { field5 = it }, dateFormat = dateFormat)
                         DatePickerField(label = stringResource(R.string.label_end_date), value = field6, onValueChange = { field6 = it }, dateFormat = dateFormat)
 
@@ -298,7 +315,7 @@ fun AddCareerScreen(
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
                     enabled = isFormValid
                 ) {
-                    Text(stringResource(if (itemId > 0) R.string.btn_save_complete else R.string.btn_save))
+                    Text(stringResource(if (itemId > 0) R.string.btn_save_complete else R.string.btn_save), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -310,7 +327,7 @@ fun DatePickerField(label: String, value: String, onValueChange: (String) -> Uni
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     value.toLongOrNull()?.let { calendar.timeInMillis = it }
-    
+
     val datePicker = DatePickerDialog(
         context,
         { _, y, m, d ->

@@ -147,4 +147,7 @@
     <string name="label_item_status">状態</string>
     <string name="label_item_detail">詳細内容</string>
     <string name="msg_delete_confirm">この記録を削除してもよろしいですか？応募履歴に保存されたスナップショットは維持されます。</string>
+    <string name="sort_applied_date">応募日順</string>
+    <string name="sort_deadline_date">締切日順</string>
+    <string name="sort_updated_at">修正日順</string>
 </resources>

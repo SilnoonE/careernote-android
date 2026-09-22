@@ -40,7 +40,25 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 val backupStoreDir = File(context.filesDir, "original_backup")
                 if (backupStoreDir.exists()) {
-                    // Perform rollback logic here
+                    try {
+                        val currentDbFile = context.getDatabasePath("careernote_db")
+                        val currentDbDir = currentDbFile.parentFile
+                        if (currentDbDir != null) {
+                            currentDbDir.listFiles()?.forEach { it.delete() }
+                            File(backupStoreDir, "databases").listFiles()?.forEach { it.copyTo(File(currentDbDir, it.name), true) }
+                        }
+
+                        File(backupStoreDir, "files").listFiles()?.forEach { restoredFile ->
+                            val targetFile = File(context.filesDir, restoredFile.name)
+                            if (targetFile.exists()) {
+                                if (targetFile.isDirectory) targetFile.deleteRecursively() else targetFile.delete()
+                            }
+                            if (restoredFile.isDirectory) restoredFile.copyRecursively(targetFile, true)
+                            else restoredFile.copyTo(targetFile, true)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
                 markerFile.delete()
             }
@@ -51,7 +69,7 @@ class SettingsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "ko")
 
     val theme: StateFlow<String> = repository.theme
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "system")
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "light")
 
     fun setLanguage(langCode: String) {
         viewModelScope.launch {
@@ -99,7 +117,7 @@ class SettingsViewModel @Inject constructor(
                 // Copy relevant files (PDFs and DataStore)
                 val filesDir = File(tempDir, "files")
                 filesDir.mkdirs()
-                
+
                 // Copy only what we need: submitted PDFs and datastore
                 context.filesDir.listFiles()?.forEach { file ->
                     if (file.name.startsWith("submitted_pdf_") || file.name == "datastore") {
@@ -117,7 +135,7 @@ class SettingsViewModel @Inject constructor(
                         inputStream.copyTo(outputStream)
                     }
                 } ?: throw IOException("출력 스트림을 생성할 수 없습니다.")
-                
+
                 tempDir.deleteRecursively()
                 zipFile.delete()
 
@@ -133,7 +151,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val restoreWorkDir = File(context.filesDir, "restore_work")
             val backupStoreDir = File(context.filesDir, "original_backup")
-            
+
             try {
                 restoreWorkDir.deleteRecursively()
                 restoreWorkDir.mkdirs()
@@ -179,15 +197,15 @@ class SettingsViewModel @Inject constructor(
                 // Create backup of current data in persistent storage
                 backupStoreDir.deleteRecursively()
                 backupStoreDir.mkdirs()
-                
+
                 database.close()
-                
+
                 val currentDbFile = context.getDatabasePath("careernote_db")
                 val currentDbDir = currentDbFile.parentFile
                 if (currentDbDir != null && currentDbDir.exists()) {
                     currentDbDir.copyRecursively(File(backupStoreDir, "databases"), true)
                 }
-                
+
                 val backupFilesDir = File(backupStoreDir, "files")
                 backupFilesDir.mkdirs()
                 context.filesDir.listFiles()?.forEach { file ->
@@ -221,7 +239,7 @@ class SettingsViewModel @Inject constructor(
                             else restoredFile.copyTo(targetFile, true)
                         }
                     }
-                    
+
                     // PDF path fix-up in DB
                     android.database.sqlite.SQLiteDatabase.openDatabase(currentDbFile.absolutePath, null, android.database.sqlite.SQLiteDatabase.OPEN_READWRITE).use { db ->
                         db.execSQL(
@@ -270,7 +288,12 @@ class SettingsViewModel @Inject constructor(
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
         intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         context.startActivity(intent)
-        Process.killProcess(Process.myPid())
+
+        // Give a tiny bit of time for startActivity to register before killing the process
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(100)
+            Process.killProcess(Process.myPid())
+        }
     }
 
     fun clearAllData(onComplete: (Boolean) -> Unit) {
@@ -288,7 +311,7 @@ class SettingsViewModel @Inject constructor(
                 }
 
                 database.clearAllTables()
-                context.filesDir.listFiles()?.forEach { 
+                context.filesDir.listFiles()?.forEach {
                     if (it.name.startsWith("submitted_pdf_")) it.delete()
                 }
                 withContext(Dispatchers.Main) {

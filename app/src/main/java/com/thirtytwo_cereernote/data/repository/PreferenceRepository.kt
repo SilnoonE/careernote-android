@@ -29,20 +29,28 @@ class PreferenceRepository @Inject constructor(
     }
 
     val theme: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[themeKey] ?: "system"
+        preferences[themeKey] ?: "light"
     }
 
     private val draftsKey = stringPreferencesKey("drafts_json")
 
     val draftsJson: Flow<String> = context.dataStore.data.map { preferences ->
-        var json = preferences[draftsKey] ?: "{}"
-        
+        val json = preferences[draftsKey] ?: "{}"
+
         // Legacy migration
         if (json == "{}") {
             val legacyCoverLetter = preferences[draftCoverLetterKey]
             val legacyMemo = preferences[draftMemoKey]
             if (legacyCoverLetter != null || legacyMemo != null) {
-                json = "{\"cover_letter_0\":{\"type\":\"cover_letter\",\"itemId\":0,\"field1\":\"$legacyCoverLetter\",\"field3\":\"$legacyMemo\"}}"
+                val legacyDraft = com.thirtytwo_cereernote.data.model.Draft(
+                    type = "cover_letter",
+                    itemId = 0L,
+                    field1 = legacyCoverLetter ?: "",
+                    field3 = legacyMemo ?: ""
+                )
+                try {
+                    return@map Json.encodeToString(mapOf("cover_letter_0" to legacyDraft))
+                } catch (_: Exception) {}
             }
         }
         json
@@ -56,17 +64,17 @@ class PreferenceRepository @Inject constructor(
             } catch (_: Exception) {
                 mutableMapOf()
             }
-            
+
             val key = "${type}_$itemId"
             val existing = draftsMap[key]
             val updated = update(existing)
-            
+
             if (updated == null) {
                 draftsMap.remove(key)
             } else {
                 draftsMap[key] = updated
             }
-            
+
             preferences[draftsKey] = Json.encodeToString(draftsMap.toMap())
         }
     }

@@ -37,6 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Production advertising metadata is excluded from this public snapshot. -->
 
         <provider
             android:name="androidx.core.content.FileProvider"

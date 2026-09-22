@@ -30,10 +30,10 @@ class ApplicationsViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context
 ) : ViewModel() {
-    
+
     private val notificationHelper = NotificationHelper(context)
 
-    val drafts = preferenceRepository.draftsJson.map { 
+    val drafts = preferenceRepository.draftsJson.map {
         try {
             Json.decodeFromString<Map<String, Draft>>(it)
         } catch (e: Exception) {
@@ -60,13 +60,12 @@ class ApplicationsViewModel @Inject constructor(
 
     val allResumes = careerRepository.getAllResumes()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-    
+
     val allPortfolios = careerRepository.getAllPortfolios()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val searchQuery = MutableStateFlow("")
-    val statusFilter = MutableStateFlow<ApplicationStatus?>(null)
-    val favoriteFilter = MutableStateFlow(false)
+    val filterGroup = MutableStateFlow(ApplicationFilterGroup.ALL)
     val sortBy = MutableStateFlow("appliedDate")
 
     val isInitialEmpty: StateFlow<Boolean> = repository.allApplications
@@ -76,11 +75,12 @@ class ApplicationsViewModel @Inject constructor(
     val applications: StateFlow<List<Application>> = combine(
         repository.allApplications,
         searchQuery,
-        statusFilter,
-        favoriteFilter,
+        filterGroup,
         sortBy
-    ) { apps, query, status, favOnly, sort ->
+    ) { apps, query, group, sort ->
         var result = apps
+
+        // 1. Filter by Search Query
         if (query.isNotBlank()) {
             result = result.filter {
                 it.companyName.contains(query, ignoreCase = true) ||
@@ -88,9 +88,26 @@ class ApplicationsViewModel @Inject constructor(
                 it.memo.contains(query, ignoreCase = true)
             }
         }
-        if (status != null) result = result.filter { it.currentStatus == status }
-        if (favOnly) result = result.filter { it.isFavorite }
 
+        // 2. Filter by Group
+        result = when (group) {
+            ApplicationFilterGroup.ALL -> result
+            ApplicationFilterGroup.FAVORITE -> result.filter { it.isFavorite }
+            ApplicationFilterGroup.ONGOING -> result.filter {
+                it.currentStatus in setOf(
+                    ApplicationStatus.APPLY_COMPLETED, ApplicationStatus.DOCUMENT_REVIEW,
+                    ApplicationStatus.DOCUMENT_PASSED, ApplicationStatus.INTERVIEW_PLANNED,
+                    ApplicationStatus.INTERVIEW_ONGOING, ApplicationStatus.INTERVIEW_PASSED
+                )
+            }
+            ApplicationFilterGroup.PASSED -> result.filter { it.currentStatus.isFinalPassed() }
+            ApplicationFilterGroup.FAILED -> result.filter { it.currentStatus.isFailedDocument() || it.currentStatus.isFailedInterview() }
+            ApplicationFilterGroup.PLANNED -> result.filter {
+                it.currentStatus in setOf(ApplicationStatus.INTERESTED, ApplicationStatus.APPLY_PLANNED, ApplicationStatus.CANCELLED)
+            }
+        }
+
+        // 3. Sort
         when (sort) {
             "appliedDate" -> result.sortedByDescending { it.appliedDate }
             "deadlineDate" -> result.sortedBy { it.deadlineDate ?: Date(Long.MAX_VALUE) }
@@ -129,7 +146,7 @@ class ApplicationsViewModel @Inject constructor(
             // Delete attached files and snapshots
             val filesToDelete = mutableListOf<String?>()
             filesToDelete.add(application.attachedPdfPath)
-            
+
             // Try to extract paths from snapshots
             try {
                 application.resumeSnapshot?.let { json ->
@@ -156,7 +173,7 @@ class ApplicationsViewModel @Inject constructor(
             repository.deleteApplication(application)
             notificationHelper.cancelNotification(application.id, NotificationHelper.TYPE_APPLICATION)
             val interviews = repository.getInterviewsByApplicationId(application.id).first()
-            interviews.forEach { 
+            interviews.forEach {
                 notificationHelper.cancelNotification(it.id, NotificationHelper.TYPE_INTERVIEW)
             }
         }
@@ -166,7 +183,7 @@ class ApplicationsViewModel @Inject constructor(
         viewModelScope.launch {
             repository.updateStatus(applicationId, newStatus, memo)
 
-            if (newStatus == ApplicationStatus.CANCELLED || 
+            if (newStatus == ApplicationStatus.CANCELLED ||
                 newStatus == ApplicationStatus.DOCUMENT_FAILED ||
                 newStatus == ApplicationStatus.INTERVIEW_FAILED) {
                 notificationHelper.cancelNotification(applicationId, NotificationHelper.TYPE_APPLICATION)
@@ -233,7 +250,7 @@ class ApplicationsViewModel @Inject constructor(
                 jobTitle = coverLetter.jobTitle,
                 version = coverLetter.version,
                 memo = coverLetter.memo,
-                questions = questions.map { 
+                questions = questions.map {
                     CoverLetterQuestionSnapshot(
                         question = it.question,
                         answer = it.answer,

@@ -32,6 +32,7 @@ import java.util.Locale
 fun CareerListScreen(
     id: String,
     title: String,
+    onBack: () -> Unit,
     onAddClick: () -> Unit,
     onItemClick: (Long) -> Unit,
     viewModel: CareerViewModel = hiltViewModel()
@@ -60,12 +61,27 @@ fun CareerListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                title = {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = { /* Back button handled by parent */ }) {
-                        // Empty or handle back here if needed
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로가기")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         },
         floatingActionButton = {
@@ -100,7 +116,7 @@ fun CareerListScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "$title 기록이 없습니다.",
+                        text = if(title.isNotBlank()) "$title 기록이 없습니다." else "기록이 없습니다.",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -122,29 +138,29 @@ fun CareerListScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     when (id) {
-                        "cover_letter" -> items(coverLetters) { item -> 
-                            CoverLetterCard(item, onClick = { onItemClick(item.id) }) 
+                        "cover_letter" -> items(coverLetters) { item ->
+                            CoverLetterCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "resume" -> items(resumes) { item -> 
-                            ResumeCard(item, onClick = { onItemClick(item.id) }) 
+                        "resume" -> items(resumes) { item ->
+                            ResumeCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "portfolio" -> items(portfolios) { item -> 
-                            PortfolioCard(item, onClick = { onItemClick(item.id) }) 
+                        "portfolio" -> items(portfolios) { item ->
+                            PortfolioCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "project" -> items(projects) { item -> 
-                            ProjectCard(item, onClick = { onItemClick(item.id) }) 
+                        "project" -> items(projects) { item ->
+                            ProjectCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "certification" -> items(certifications) { item -> 
-                            CertificationCard(item, onClick = { onItemClick(item.id) }) 
+                        "certification" -> items(certifications) { item ->
+                            CertificationCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "interview_question" -> items(interviewQuestions) { item -> 
-                            InterviewQuestionCard(item, onClick = { onItemClick(item.id) }) 
+                        "interview_question" -> items(interviewQuestions) { item ->
+                            InterviewQuestionCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "experience" -> items(experiences) { item -> 
-                            ExperienceCard(item, onClick = { onItemClick(item.id) }) 
+                        "experience" -> items(experiences) { item ->
+                            ExperienceCard(item, onClick = { onItemClick(item.id) })
                         }
-                        "education" -> items(educations) { item -> 
-                            EducationCard(item, onClick = { onItemClick(item.id) }) 
+                        "education" -> items(educations) { item ->
+                            EducationCard(item, onClick = { onItemClick(item.id) })
                         }
                     }
                 }

@@ -38,7 +38,7 @@ fun AddApplicationScreen(
     var status by remember { mutableStateOf(ApplicationStatus.INTERESTED) }
     var employmentType by remember { mutableStateOf(EmploymentType.FULL_TIME) }
     var deadlineDate by remember { mutableStateOf<Date?>(null) }
-    
+
     var isInitialized by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -65,9 +65,9 @@ fun AddApplicationScreen(
     LaunchedEffect(companyName, jobTitle, status, deadlineDate) {
         if (isInitialized) {
             viewModel.saveDraft(
-                companyName, 
-                jobTitle, 
-                status.name, 
+                companyName,
+                jobTitle,
+                status.name,
                 deadlineDate?.let { dateFormat.format(it) } ?: ""
             )
         }
@@ -89,12 +89,27 @@ fun AddApplicationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_add_application)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.title_add_application),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -111,7 +126,7 @@ fun AddApplicationScreen(
             }
 
             Text(stringResource(R.string.label_basic_info), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            
+
             OutlinedTextField(
                 value = companyName,
                 onValueChange = { companyName = it },

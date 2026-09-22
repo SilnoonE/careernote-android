@@ -1,6 +1,7 @@
 package com.thirtytwo_cereernote.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,7 +16,7 @@ fun CareerNoteNavGraph(navController: NavHostController) {
     ) {
         composable(Screen.Home.route) {
             HomeScreen(
-                onApplicationClick = { appId -> 
+                onApplicationClick = { appId ->
                     navController.navigate("application_detail/$appId")
                 },
                 onTipClick = { categoryName ->
@@ -44,8 +45,8 @@ fun CareerNoteNavGraph(navController: NavHostController) {
         }
         composable(Screen.Career.route) {
             CareerScreen(
-                onMenuItemClick = { id, titleResId -> 
-                    navController.navigate("career_list/$id/$titleResId") 
+                onMenuItemClick = { id, titleResId ->
+                    navController.navigate("career_list/$id/$titleResId")
                 },
                 onRecentItemClick = { categoryId, itemId ->
                     navController.navigate("career_detail/$categoryId/$itemId")
@@ -55,10 +56,16 @@ fun CareerNoteNavGraph(navController: NavHostController) {
         composable("career_list/{id}/{titleResId}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             val titleResId = backStackEntry.arguments?.getString("titleResId")?.toIntOrNull() ?: 0
-            val title = if (titleResId != 0) stringResource(titleResId) else ""
+            val context = androidx.compose.ui.platform.LocalContext.current
+            val title = remember(titleResId) {
+                if (titleResId != 0) {
+                    try { context.getString(titleResId) } catch (_: Exception) { "" }
+                } else ""
+            }
             CareerListScreen(
                 id = id,
                 title = title,
+                onBack = { navController.popBackStack() },
                 onAddClick = { navController.navigate("add_career/$id/$titleResId") },
                 onItemClick = { itemId -> navController.navigate("career_detail/$id/$itemId") }
             )
@@ -97,7 +104,7 @@ fun CareerNoteNavGraph(navController: NavHostController) {
         }
         composable("career_tips") {
             CareerTipsScreen(
-                onCategoryClick = { category -> 
+                onCategoryClick = { category ->
                     navController.navigate("career_tips_detail/${category.name}")
                 },
                 onBack = { navController.popBackStack() }

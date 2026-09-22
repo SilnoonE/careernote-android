@@ -1,13 +1,25 @@
 # 검증 상태와 후속 작업
 
-이 공개 스냅샷은 소스 공개 준비 결과입니다. 별도의 Android 빌드·기기 테스트를 실행하지 않았습니다.
-과거 개발 도구의 빌드 성공 보고는 이 사본의 테스트 결과로 간주하지 않습니다.
+## 2026-09-23 자동 검증 결과
+
+JDK 21, Android SDK 36 환경에서 다음 명령을 실행했습니다.
+
+```text
+gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --no-daemon
+```
+
+- 디버그 APK 조립: 성공
+- JVM 단위 테스트: 4개 성공, 실패 0개
+- Android Lint: 완료, 오류 0개, 경고 63개, 정보 1개
+
+주요 경고는 AGP 8.7.3의 공식 `compileSdk` 검증 범위가 35인데 프로젝트가 36을 사용하는 점, 일부 deprecated API, `CareerViewModel`의 unchecked cast입니다. 빌드 중 Kotlin daemon이 로컬 임시 폴더 접근 제한을 받아 프로세스 내부 컴파일로 자동 전환됐지만 최종 작업은 성공했습니다.
+
+이 결과는 컴파일·기본 단위 테스트·정적 분석 범위이며 실제 기기 UI, 알림, 파일 선택, 백업 복원과 DB 마이그레이션의 완전한 동작을 보증하지 않습니다.
 
 공개 전에는 광고 ID·비밀정보 패턴과 제외 파일을 점검합니다. 자동 패턴 검사는 모든 민감정보를 탐지한다는 보장이 아닙니다.
 
 ## 다음 검증
 
-- :app:assembleDebug, :app:testDebugUnitTest, :app:lintDebug
 - 지원하는 DB 버전별 마이그레이션과 레코드 보존
 - 정상·손상·경로 탈출 ZIP, 복사·롤백 실패 시 데이터 보존
 - 문서별 초안 복원·동시 편집·최종 저장 경합

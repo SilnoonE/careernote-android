@@ -40,33 +40,56 @@ fun CareerTipsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.career_tips_title)) },
+                title = {
+                    Text(
+                        stringResource(R.string.career_tips_title),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             contentPadding = PaddingValues(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                Text(
-                    text = stringResource(R.string.career_tips_hero_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = stringResource(R.string.career_tips_hero_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.career_tips_hero_title),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = stringResource(R.string.career_tips_hero_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 8.dp),
+                        lineHeight = 22.sp
+                    )
+                }
             }
 
             item {
@@ -74,7 +97,7 @@ fun CareerTipsScreen(
                     title = stringResource(R.string.career_tips_market),
                     subtitle = "2026년 최신 고용 시장 데이터 분석",
                     icon = Icons.Default.AutoGraph,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = Color(0xFF2196F3),
                     onClick = { onCategoryClick(TipCategory.MARKET) }
                 )
             }
@@ -108,6 +131,10 @@ fun CareerTipsScreen(
                     onClick = { onCategoryClick(TipCategory.CAREER_CHANGE) }
                 )
             }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }
@@ -124,20 +151,22 @@ fun CategoryHubCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(130.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(28.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(28.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Box(
+            // Background Decoration Circle - Fixed positioning and size
+            Surface(
                 modifier = Modifier
-                    .size(100.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = 20.dp, y = (-20).dp)
-                    .background(color.copy(alpha = 0.08f), CircleShape)
-            )
+                    .size(140.dp)
+                    .align(Alignment.CenterEnd)
+                    .offset(x = 40.dp),
+                shape = CircleShape,
+                color = color.copy(alpha = 0.06f)
+            ) {}
 
             Row(
                 modifier = Modifier
@@ -146,27 +175,38 @@ fun CategoryHubCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
-                    color = color.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(16.dp),
+                    color = color.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(18.dp),
                     modifier = Modifier.size(64.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(32.dp))
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.width(20.dp))
-                
+
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+                    tint = color.copy(alpha = 0.6f)
                 )
             }
         }
@@ -183,11 +223,11 @@ fun CareerTipsDetailScreen(
     val category = try { TipCategory.valueOf(categoryName) } catch (_: Exception) { TipCategory.MARKET }
     val tips by viewModel.tips.collectAsState()
     val filteredTips = tips.filter { it.category == category }
-    
+
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
 
     val (title, icon, color) = when(category) {
-        TipCategory.MARKET -> Triple(stringResource(R.string.career_tips_market), Icons.Default.AutoGraph, MaterialTheme.colorScheme.primary)
+        TipCategory.MARKET -> Triple(stringResource(R.string.career_tips_market), Icons.Default.AutoGraph, Color(0xFF2196F3))
         TipCategory.JOB_GUIDE -> Triple(stringResource(R.string.career_tips_job_guide), Icons.Default.WorkHistory, Color(0xFF673AB7))
         TipCategory.INTERVIEW -> Triple(stringResource(R.string.career_tips_interview), Icons.Default.InterpreterMode, Color(0xFFE91E63))
         TipCategory.CAREER_CHANGE -> Triple(stringResource(R.string.career_tips_career_change), Icons.Default.RocketLaunch, Color(0xFF4CAF50))
@@ -196,12 +236,24 @@ fun CareerTipsDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                title = {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = color.copy(alpha = 0.1f)
+                )
             )
         }
     ) { innerPadding ->
@@ -212,7 +264,8 @@ fun CareerTipsDetailScreen(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            color.copy(alpha = 0.05f),
+                            color.copy(alpha = 0.1f),
+                            MaterialTheme.colorScheme.background,
                             MaterialTheme.colorScheme.background
                         )
                     )
@@ -224,20 +277,33 @@ fun CareerTipsDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
                         Surface(
-                            color = color.copy(alpha = 0.1f),
+                            color = color.copy(alpha = 0.15f),
                             shape = CircleShape,
-                            modifier = Modifier.size(56.dp)
+                            modifier = Modifier.size(60.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(28.dp))
+                                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(32.dp))
                             }
                         }
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
                         Column {
-                            Text(text = title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                            Text(text = "성공적인 커리어를 위한 맞춤 가이드", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Text(
+                                text = "성공적인 커리어를 위한 맞춤 가이드",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }
@@ -245,23 +311,22 @@ fun CareerTipsDetailScreen(
                 items(filteredTips) { tip ->
                     val isExpanded = expandedStates[tip.id] ?: (filteredTips.indexOf(tip) == 0)
                     RichTipCard(
-                        tip = tip, 
+                        tip = tip,
                         accentColor = color,
                         isExpanded = isExpanded,
                         onExpandToggle = { expandedStates[tip.id] = !isExpanded }
                     )
                 }
-                
+
                 item { Spacer(modifier = Modifier.height(40.dp)) }
             }
         }
     }
 }
 
-// ... RichTipCard and RichTextBody remain same ...
 @Composable
 fun RichTipCard(
-    tip: CareerTip, 
+    tip: CareerTip,
     accentColor: Color,
     isExpanded: Boolean,
     onExpandToggle: () -> Unit
@@ -279,7 +344,7 @@ fun RichTipCard(
         Column(modifier = Modifier.padding(24.dp)) {
             if (tip.badge != null) {
                 Surface(
-                    color = accentColor.copy(alpha = 0.1f),
+                    color = accentColor.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.padding(bottom = 12.dp)
                 ) {
@@ -318,15 +383,15 @@ fun RichTipCard(
 
             if (isExpanded) {
                 RichTextBody(tip.body, accentColor)
-                
+
                 if (tip.source != null) {
                     Spacer(modifier = Modifier.height(24.dp))
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -344,7 +409,7 @@ fun RichTipCard(
                         }
                     }
                 }
-                
+
                 Text(
                     text = "접기 ∧",
                     style = MaterialTheme.typography.labelMedium,
@@ -353,12 +418,26 @@ fun RichTipCard(
                     textAlign = TextAlign.Center
                 )
             } else {
+                val previewText = remember(tip.body) {
+                    tip.body.split("\n")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .map { line ->
+                            line.replace(Regex("^###\\s*"), "")
+                                .replace(Regex("^■\\s*"), "")
+                                .replace(Regex("^[-•①②③④⑤]\\s*"), "")
+                                .trim()
+                        }
+                        .firstOrNull { it.isNotEmpty() }
+                        ?: tip.body.take(100).replace("\n", " ")
+                }
                 Text(
-                    text = tip.body.split("\n").firstOrNull() ?: "",
+                    text = previewText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 22.sp
                 )
                 Text(
                     text = "자세히 보기 ∨",

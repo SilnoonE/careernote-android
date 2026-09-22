@@ -28,16 +28,25 @@ enum class ApplicationStatus(val displayName: String) {
     fun isFinalPassed(): Boolean = this in setOf(
         FINAL_PASSED, ONBOARDING_PLANNED, ONBOARDING_COMPLETED
     )
-    
+
     fun isFailedDocument(): Boolean = this == DOCUMENT_FAILED
-    
+
     fun isFailedInterview(): Boolean = this == INTERVIEW_FAILED
-    
+
     fun isFinished(): Boolean = this in setOf(
         DOCUMENT_FAILED, INTERVIEW_FAILED, FINAL_PASSED, ONBOARDING_PLANNED, ONBOARDING_COMPLETED, CANCELLED
     )
 
     fun isActualApplied(): Boolean = this !in setOf(INTERESTED, APPLY_PLANNED, CANCELLED)
+}
+
+enum class ApplicationFilterGroup(val displayName: String) {
+    ALL("전체"),
+    FAVORITE("즐겨찾기"),
+    ONGOING("진행중"),
+    PASSED("합격"),
+    FAILED("불합격"),
+    PLANNED("관심/예정")
 }
 
 enum class EmploymentType(val displayName: String) {

@@ -2,6 +2,7 @@ package com.thirtytwo_cereernote.ui.screen
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,27 +11,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thirtytwo_cereernote.R
 import com.thirtytwo_cereernote.data.model.*
 import com.thirtytwo_cereernote.util.CommonUtils
 import com.thirtytwo_cereernote.viewmodel.ApplicationsViewModel
-import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,21 +41,11 @@ fun ApplicationDetailScreen(
     var application by remember { mutableStateOf<Application?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     val interviews by viewModel.getInterviews(applicationId).collectAsState(initial = emptyList())
-    
+
     val coverLetters by viewModel.allCoverLetters.collectAsState()
     val resumes by viewModel.allResumes.collectAsState()
     val portfolios by viewModel.allPortfolios.collectAsState()
 
-    val scope = rememberCoroutineScope()
-
-    // Independent lookup
-    LaunchedEffect(applicationId) {
-        // We use a separate Flow or just get the current state from ViewModel
-        // For simplicity, let's observe the list but find by ID, OR add getApplicationById to VM
-        // viewModel.applications.collect { apps -> ... }
-    }
-    
-    // Using a more robust way to track the specific application
     val apps by viewModel.applications.collectAsState()
     LaunchedEffect(apps, applicationId) {
         isLoading = apps.isEmpty() && viewModel.isInitialEmpty.value.not()
@@ -73,6 +62,7 @@ fun ApplicationDetailScreen(
     var showSnapshotDialog by remember { mutableStateOf<Pair<String, String>?>(null) }
 
     val context = LocalContext.current
+    val dateFormat = remember { java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()) }
 
     val pdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -90,7 +80,7 @@ fun ApplicationDetailScreen(
     val currentApp = application
     if (currentApp == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("기록을 찾을 수 없습니다.")
+            Text(stringResource(R.string.msg_no_record_found))
         }
         return
     }
@@ -120,9 +110,9 @@ fun ApplicationDetailScreen(
                     coverLetters.forEach { cl ->
                         ListItem(
                             headlineContent = { Text(cl.title) },
-                            modifier = Modifier.clickable { 
+                            modifier = Modifier.clickable {
                                 viewModel.linkCoverLetter(currentApp, cl)
-                                showLinkDocDialog = false 
+                                showLinkDocDialog = false
                             }
                         )
                     }
@@ -131,9 +121,9 @@ fun ApplicationDetailScreen(
                     resumes.forEach { rs ->
                         ListItem(
                             headlineContent = { Text(rs.title) },
-                            modifier = Modifier.clickable { 
+                            modifier = Modifier.clickable {
                                 viewModel.linkResume(currentApp, rs)
-                                showLinkDocDialog = false 
+                                showLinkDocDialog = false
                             }
                         )
                     }
@@ -142,9 +132,9 @@ fun ApplicationDetailScreen(
                     portfolios.forEach { pt ->
                         ListItem(
                             headlineContent = { Text(pt.title) },
-                            modifier = Modifier.clickable { 
+                            modifier = Modifier.clickable {
                                 viewModel.linkPortfolio(currentApp, pt)
-                                showLinkDocDialog = false 
+                                showLinkDocDialog = false
                             }
                         )
                     }
@@ -239,7 +229,7 @@ fun ApplicationDetailScreen(
             cal.set(y, m, d)
             interviewDate = cal.time
         }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH))
-        
+
         val timePicker = android.app.TimePickerDialog(context, { _, h, min ->
             cal.set(java.util.Calendar.HOUR_OF_DAY, h)
             cal.set(java.util.Calendar.MINUTE, min)
@@ -278,12 +268,27 @@ fun ApplicationDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_application_detail)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.title_application_detail),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -291,16 +296,33 @@ fun ApplicationDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
         ) {
+            // [1] Company and Status Hero
             item {
-                Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
                         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                            Column {
-                                Text(text = currentApp.companyName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                                Text(text = currentApp.jobTitle, style = MaterialTheme.typography.titleMedium)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = currentApp.companyName,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = currentApp.jobTitle,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                             IconButton(onClick = { viewModel.toggleFavorite(currentApp) }) {
                                 Icon(
@@ -310,89 +332,216 @@ fun ApplicationDetailScreen(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        SuggestionChip(onClick = { showStatusDialog = true }, label = { Text(currentApp.currentStatus.displayName) })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AssistChip(
+                            onClick = { showStatusDialog = true },
+                            label = { Text(currentApp.currentStatus.displayName, fontWeight = FontWeight.Bold) },
+                            leadingIcon = { Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                labelColor = MaterialTheme.colorScheme.primary,
+                                leadingIconContentColor = MaterialTheme.colorScheme.primary
+                            ),
+                            border = AssistChipDefaults.assistChipBorder(
+                                enabled = true,
+                                borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            )
+                        )
                     }
                 }
             }
 
+            // [2] Schedule Section
             item {
-                Text(text = "📅 ${stringResource(R.string.label_schedule)}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text(text = "${stringResource(R.string.label_applied_date)}: ${currentApp.appliedDate.toLocaleString()}")
-                        Text(text = "${stringResource(R.string.label_deadline_date)}: ${currentApp.deadlineDate?.toLocaleString() ?: "상시/미정"}")
+                SectionHeader(title = stringResource(R.string.label_schedule), icon = Icons.Default.CalendarMonth)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        InfoRow(label = stringResource(R.string.label_applied_date), value = dateFormat.format(currentApp.appliedDate))
+                        InfoRow(label = stringResource(R.string.label_deadline_date), value = currentApp.deadlineDate?.let { dateFormat.format(it) } ?: "상시/미정")
                     }
                 }
             }
 
+            // [3] Documents Section
             item {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "📄 ${stringResource(R.string.label_docs)}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    SectionHeader(title = stringResource(R.string.label_docs), icon = Icons.Default.Description)
                     Row {
-                        IconButton(onClick = { showLinkDocDialog = true }) { Icon(Icons.Default.Link, contentDescription = null) }
-                        IconButton(onClick = { pdfLauncher.launch("application/pdf") }) { Icon(Icons.Default.Add, contentDescription = null) }
+                        IconButton(onClick = { showLinkDocDialog = true }) { Icon(Icons.Default.Link, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
+                        IconButton(onClick = { pdfLauncher.launch("application/pdf") }) { Icon(Icons.Default.FileUpload, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
                     }
                 }
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         SnapshotItemView(stringResource(R.string.career_cover_letter), currentApp.coverLetterSnapshot) { t, c -> showSnapshotDialog = t to c }
                         SnapshotItemView(stringResource(R.string.career_resume), currentApp.resumeSnapshot) { t, c -> showSnapshotDialog = t to c }
                         SnapshotItemView(stringResource(R.string.career_portfolio), currentApp.portfolioSnapshot) { t, c -> showSnapshotDialog = t to c }
-                        
+
                         if (currentApp.attachedPdfName != null) {
-                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { 
-                                currentApp.attachedPdfPath?.let { CommonUtils.openFile(context, it) }
-                            }) {
-                                Icon(Icons.Default.Link, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("${stringResource(R.string.label_attached_pdf)}: ${currentApp.attachedPdfName}", color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { currentApp.attachedPdfPath?.let { CommonUtils.openFile(context, it) } }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color(0xFFE91E63))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "${stringResource(R.string.label_attached_pdf)}: ${currentApp.attachedPdfName}",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                             }
                         }
                     }
                 }
             }
 
+            // [4] Interviews Section
             item {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "👥 ${stringResource(R.string.label_interviews)}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    IconButton(onClick = { showAddInterviewDialog = true }) { Icon(Icons.Default.Add, contentDescription = null) }
+                    SectionHeader(title = stringResource(R.string.label_interviews), icon = Icons.Default.Groups)
+                    IconButton(onClick = { showAddInterviewDialog = true }) {
+                        Icon(Icons.Default.AddCircleOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    }
+                }
+                if (interviews.isEmpty()) {
+                    Text(
+                        "등록된 면접 일정이 없습니다.",
+                        modifier = Modifier.padding(start = 4.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
                 }
                 interviews.forEach { interview ->
-                    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f))) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                                Text(text = interview.stage, fontWeight = FontWeight.Bold)
-                                IconButton(onClick = { viewModel.removeInterview(interview) }) { Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = interview.stage, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                                IconButton(onClick = { viewModel.removeInterview(interview) }, modifier = Modifier.size(24.dp)) {
+                                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.error)
+                                }
                             }
-                            Text(text = "일시: ${interview.interviewDate.toLocaleString()}", style = MaterialTheme.typography.bodySmall)
-                            Text(text = "장소: ${interview.location}", style = MaterialTheme.typography.bodySmall)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.AccessTime, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.outline)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = dateFormat.format(interview.interviewDate), style = MaterialTheme.typography.bodySmall)
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Place, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.outline)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = interview.location.ifBlank { "장소 미정" }, style = MaterialTheme.typography.bodySmall)
+                            }
                         }
                     }
                 }
             }
 
+            // [5] Links and Memo Section
             item {
-                Text(text = "🔗 ${stringResource(R.string.label_links_memo)}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SectionHeader(title = stringResource(R.string.label_links_memo), icon = Icons.Default.Link)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         if (currentApp.noticeUrl.isNotBlank()) {
-                            Text(text = "${stringResource(R.string.label_notice_url)}: ${currentApp.noticeUrl}", color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline, modifier = Modifier.clickable { 
-                                CommonUtils.openUrl(context, currentApp.noticeUrl)
-                            })
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.label_notice_url),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.clickable { CommonUtils.openUrl(context, currentApp.noticeUrl) },
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
-                        Text(text = "${stringResource(R.string.label_memo_content)}: ${currentApp.memo.ifBlank { "없음" }}")
+                        Text(
+                            text = currentApp.memo.ifBlank { "작성된 메모가 없습니다." },
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (currentApp.memo.isBlank()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
 
+            // [6] Actions
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = { showEditInfoDialog = true }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.btn_edit_info)) }
-                    OutlinedButton(onClick = { viewModel.deleteApplication(currentApp); onBack() }, modifier = Modifier.weight(1f), colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)) { Text(stringResource(R.string.btn_delete_all)) }
+                    Button(
+                        onClick = { showEditInfoDialog = true },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.btn_edit_info))
+                    }
+                    OutlinedButton(
+                        onClick = { viewModel.deleteApplication(currentApp); onBack() },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Icon(Icons.Default.DeleteForever, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.btn_delete_all))
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SectionHeader(title: String, icon: ImageVector) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
@@ -407,7 +556,7 @@ fun SnapshotItemView(label: String, json: String?, onClick: (String, String) -> 
             obj["title"]?.let { sb.append("제목: ${(it as kotlinx.serialization.json.JsonPrimitive).content}\n") }
             obj["version"]?.let { sb.append("버전: ${(it as kotlinx.serialization.json.JsonPrimitive).content}\n") }
             obj["memo"]?.let { sb.append("\n${(it as kotlinx.serialization.json.JsonPrimitive).content}\n") }
-            obj["questions"]?.let { 
+            obj["questions"]?.let {
                 val qArr = it as kotlinx.serialization.json.JsonArray
                 qArr.forEach { q ->
                     val qObj = q as kotlinx.serialization.json.JsonObject
@@ -418,9 +567,19 @@ fun SnapshotItemView(label: String, json: String?, onClick: (String, String) -> 
             sb.toString()
         } catch (_: Exception) { json }
     }
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { onClick(label, content) }.padding(vertical = 4.dp)) {
-        Icon(Icons.Default.Link, contentDescription = null, modifier = Modifier.size(16.dp))
-        Spacer(modifier = Modifier.width(4.dp))
-        Text("$label (스냅샷 보기)", color = MaterialTheme.colorScheme.primary)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick(label, content) }
+            .padding(vertical = 4.dp)
+    ) {
+        Icon(Icons.AutoMirrored.Filled.InsertDriveFile, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.secondary)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "$label (스냅샷 보기)",
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }

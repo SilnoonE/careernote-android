@@ -146,4 +146,8 @@
     <string name="label_item_status">상태</string>
     <string name="label_item_detail">상세 내용</string>
     <string name="msg_delete_confirm">이 기록을 정말 삭제하시겠습니까? 연결된 제출 이력의 스냅샷은 유지됩니다.</string>
+
+    <string name="sort_applied_date">지원일순</string>
+    <string name="sort_deadline_date">마감일순</string>
+    <string name="sort_updated_at">수정일순</string>
 </resources>
