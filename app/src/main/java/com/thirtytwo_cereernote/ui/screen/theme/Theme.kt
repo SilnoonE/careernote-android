@@ -16,17 +16,17 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Blue80,
+    primary = PrimaryDark,
+    onPrimary = OnPrimaryDark,
     primaryContainer = PrimaryContainerDark,
     onPrimaryContainer = OnPrimaryContainerDark,
-    secondary = BlueGrey80,
-    tertiary = LightBlue80,
+    secondary = SecondaryDark,
     background = BackgroundDark,
     onBackground = OnBackgroundDark,
     surface = CardDark,
     onSurface = OnSurfaceDark,
     outline = OutlineDark,
-    surfaceVariant = Color(0xFF1F2937),
+    surfaceVariant = Color(0xFF1E293B),
     onSurfaceVariant = Color(0xFF94A3B8)
 )
 
@@ -58,9 +58,16 @@ fun CareerNoteTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = if (darkTheme) colorScheme.background.toArgb() else colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            var context = view.context
+            while (context is android.content.ContextWrapper) {
+                if (context is Activity) break
+                context = context.baseContext
+            }
+            if (context is Activity) {
+                val window = context.window
+                window.statusBarColor = if (darkTheme) colorScheme.background.toArgb() else colorScheme.primary.toArgb()
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            }
         }
     }
 

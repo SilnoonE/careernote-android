@@ -48,7 +48,7 @@
     <string name="career_tips_career_change">이직 꿀팁</string>
     <string name="career_tips_as_of">2026.07 기준</string>
 
-    <string name="theme_light">라이트 모드</string>
+    <string name="theme_light">기본 모드</string>
     <string name="theme_dark">다크 모드</string>
     <string name="theme_system">시스템 설정</string>
     <string name="title_add_application">지원 정보 등록</string>

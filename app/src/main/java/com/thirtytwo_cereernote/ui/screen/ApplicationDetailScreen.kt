@@ -30,6 +30,7 @@ import com.thirtytwo_cereernote.R
 import com.thirtytwo_cereernote.data.model.*
 import com.thirtytwo_cereernote.util.CommonUtils
 import com.thirtytwo_cereernote.viewmodel.ApplicationsViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +39,7 @@ fun ApplicationDetailScreen(
     onBack: () -> Unit,
     viewModel: ApplicationsViewModel = hiltViewModel()
 ) {
+    val scope = rememberCoroutineScope()
     var application by remember { mutableStateOf<Application?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     val interviews by viewModel.getInterviews(applicationId).collectAsState(initial = emptyList())
@@ -67,7 +69,9 @@ fun ApplicationDetailScreen(
     val pdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let { viewModel.attachPdf(applicationId, it, "제출된 서류.pdf") }
+        uri?.let {
+            scope.launch { viewModel.attachPdf(applicationId, it, "제출된 서류.pdf") }
+        }
     }
 
     if (isLoading) {
@@ -111,7 +115,7 @@ fun ApplicationDetailScreen(
                         ListItem(
                             headlineContent = { Text(cl.title) },
                             modifier = Modifier.clickable {
-                                viewModel.linkCoverLetter(currentApp, cl)
+                                scope.launch { viewModel.linkCoverLetter(currentApp, cl) }
                                 showLinkDocDialog = false
                             }
                         )
@@ -122,7 +126,7 @@ fun ApplicationDetailScreen(
                         ListItem(
                             headlineContent = { Text(rs.title) },
                             modifier = Modifier.clickable {
-                                viewModel.linkResume(currentApp, rs)
+                                scope.launch { viewModel.linkResume(currentApp, rs) }
                                 showLinkDocDialog = false
                             }
                         )
@@ -133,7 +137,7 @@ fun ApplicationDetailScreen(
                         ListItem(
                             headlineContent = { Text(pt.title) },
                             modifier = Modifier.clickable {
-                                viewModel.linkPortfolio(currentApp, pt)
+                                scope.launch { viewModel.linkPortfolio(currentApp, pt) }
                                 showLinkDocDialog = false
                             }
                         )
@@ -155,7 +159,7 @@ fun ApplicationDetailScreen(
                     ApplicationStatus.entries.forEach { status ->
                         TextButton(
                             onClick = {
-                                viewModel.updateStatus(applicationId, status, "상태 전환")
+                                scope.launch { viewModel.updateStatus(applicationId, status, "상태 전환") }
                                 showStatusDialog = false
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -197,16 +201,18 @@ fun ApplicationDetailScreen(
                 TextButton(
                     enabled = editCompany.isNotBlank() && editJob.isNotBlank(),
                     onClick = {
-                        viewModel.updateApplicationInfo(
-                            currentApp.copy(
-                                companyName = editCompany,
-                                jobTitle = editJob,
-                                channel = editChannel,
-                                noticeUrl = editUrl,
-                                memo = editMemo,
-                                updatedAt = java.util.Date()
+                        scope.launch {
+                            viewModel.updateApplicationInfo(
+                                currentApp.copy(
+                                    companyName = editCompany,
+                                    jobTitle = editJob,
+                                    channel = editChannel,
+                                    noticeUrl = editUrl,
+                                    memo = editMemo,
+                                    updatedAt = java.util.Date()
+                                )
                             )
-                        )
+                        }
                         showEditInfoDialog = false
                     }
                 ) { Text(stringResource(R.string.btn_save)) }
@@ -257,7 +263,9 @@ fun ApplicationDetailScreen(
             },
             confirmButton = {
                 TextButton(enabled = stage.isNotBlank(), onClick = {
-                    viewModel.addInterview(Interview(applicationId = applicationId, stage = stage, interviewDate = interviewDate, location = loc, method = method, preparations = prepMemo))
+                    scope.launch {
+                        viewModel.addInterview(Interview(applicationId = applicationId, stage = stage, interviewDate = interviewDate, location = loc, method = method, preparations = prepMemo))
+                    }
                     showAddInterviewDialog = false
                 }) { Text("등록") }
             },
@@ -273,7 +281,7 @@ fun ApplicationDetailScreen(
                         text = stringResource(R.string.title_application_detail),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 },
                 navigationIcon = {
@@ -433,7 +441,12 @@ fun ApplicationDetailScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 Text(text = interview.stage, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                                IconButton(onClick = { viewModel.removeInterview(interview) }, modifier = Modifier.size(24.dp)) {
+                                IconButton(
+                                    onClick = {
+                                        scope.launch { viewModel.removeInterview(interview) }
+                                    },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
                                     Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.error)
                                 }
                             }
@@ -500,7 +513,12 @@ fun ApplicationDetailScreen(
                         Text(stringResource(R.string.btn_edit_info))
                     }
                     OutlinedButton(
-                        onClick = { viewModel.deleteApplication(currentApp); onBack() },
+                        onClick = {
+                            scope.launch {
+                                viewModel.deleteApplication(currentApp)
+                                onBack()
+                            }
+                        },
                         modifier = Modifier.weight(1f).height(50.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)

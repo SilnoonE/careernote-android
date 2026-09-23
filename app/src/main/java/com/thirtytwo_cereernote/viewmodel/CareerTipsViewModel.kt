@@ -51,17 +51,24 @@ class CareerTipsViewModel @Inject constructor(
                 val list = mutableListOf<CareerTip>()
                 for (i in 0 until jsonArray.length()) {
                     val obj = jsonArray.getJSONObject(i)
+                    val categoryStr = obj.optString("category")
+                    val category = try {
+                        TipCategory.valueOf(categoryStr)
+                    } catch (e: Exception) {
+                        TipCategory.MARKET
+                    }
+
                     list.add(
                         CareerTip(
-                            id = obj.getString("id"),
-                            category = TipCategory.valueOf(obj.getString("category")),
-                            title = obj.getString("title"),
-                            subtitle = if (obj.has("subtitle")) obj.getString("subtitle") else null,
-                            body = obj.getString("body"),
-                            badge = if (obj.has("badge")) obj.getString("badge") else null,
-                            source = if (obj.has("source")) obj.getString("source") else null,
-                            referenceDate = if (obj.has("referenceDate")) obj.getString("referenceDate") else null,
-                            order = if (obj.has("order")) obj.getInt("order") else 0
+                            id = obj.optString("id", i.toString()),
+                            category = category,
+                            title = obj.optString("title", ""),
+                            subtitle = if (obj.has("subtitle")) obj.optString("subtitle") else null,
+                            body = obj.optString("body", ""),
+                            badge = if (obj.has("badge")) obj.optString("badge") else null,
+                            source = if (obj.has("source")) obj.optString("source") else null,
+                            referenceDate = if (obj.has("referenceDate")) obj.optString("referenceDate") else null,
+                            order = obj.optInt("order", 0)
                         )
                     )
                 }

@@ -1,6 +1,7 @@
 package com.thirtytwo_cereernote.ui.screen
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,9 +12,10 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,8 +54,11 @@ fun AddCareerScreen(
     var field3Error by remember { mutableStateOf(false) }
 
     var isLoading by remember { mutableStateOf(itemId > 0) }
+    var isSaving by remember { mutableStateOf(false) }
     var isInitialized by remember { mutableStateOf(false) }
+    var saveError by remember { mutableStateOf<String?>(null) }
 
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
@@ -130,7 +135,7 @@ fun AddCareerScreen(
                         stringResource(if (itemId > 0) R.string.title_edit_record else R.string.title_new_record),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 },
                 navigationIcon = {
@@ -158,6 +163,7 @@ fun AddCareerScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .imePadding()
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -166,24 +172,33 @@ fun AddCareerScreen(
                     Text(text = stringResource(R.string.msg_draft_loaded), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                 }
 
+                saveError?.let { err ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    ) {
+                        Text(err, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onErrorContainer)
+                    }
+                }
+
                 when (id) {
                     "cover_letter" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_cl_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
-                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_cl_company)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
-                        OutlinedTextField(value = field3, onValueChange = { field3 = it; field3Error = false }, label = { Text(stringResource(R.string.label_cl_content)) }, modifier = Modifier.fillMaxWidth(), minLines = 8, isError = field3Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_cl_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false; saveError = null }, label = { Text(stringResource(R.string.label_cl_company)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
+                        OutlinedTextField(value = field3, onValueChange = { field3 = it; field3Error = false; saveError = null }, label = { Text(stringResource(R.string.label_cl_content)) }, modifier = Modifier.fillMaxWidth(), minLines = 8, isError = field3Error)
                     }
                     "resume" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_rs_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_rs_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it }, label = { Text(stringResource(R.string.label_rs_version)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field3, onValueChange = { field3 = it }, label = { Text(stringResource(R.string.label_rs_memo)) }, modifier = Modifier.fillMaxWidth(), minLines = 3)
                     }
                     "portfolio" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_pt_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_pt_title)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it }, label = { Text(stringResource(R.string.label_pt_url)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field3, onValueChange = { field3 = it }, label = { Text(stringResource(R.string.label_rs_memo)) }, modifier = Modifier.fillMaxWidth(), minLines = 3)
                     }
                     "project" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_pj_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_pj_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it }, label = { Text(stringResource(R.string.label_pj_role)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field3, onValueChange = { field3 = it }, label = { Text(stringResource(R.string.label_pj_tech)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field4, onValueChange = { field4 = it }, label = { Text(stringResource(R.string.label_pj_action)) }, modifier = Modifier.fillMaxWidth(), minLines = 4)
@@ -191,7 +206,7 @@ fun AddCareerScreen(
                         OutlinedTextField(value = field6, onValueChange = { field6 = it }, label = { Text(stringResource(R.string.label_pj_result)) }, modifier = Modifier.fillMaxWidth(), minLines = 3)
                     }
                     "certification" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_cert_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_cert_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
                         OutlinedTextField(value = field2, onValueChange = { field2 = it }, label = { Text(stringResource(R.string.label_cert_issuer)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field3, onValueChange = { field3 = it }, label = { Text(stringResource(R.string.label_cert_score)) }, modifier = Modifier.fillMaxWidth())
                         OutlinedTextField(value = field4, onValueChange = { field4 = it }, label = { Text(stringResource(R.string.label_cert_grade)) }, modifier = Modifier.fillMaxWidth())
@@ -200,13 +215,13 @@ fun AddCareerScreen(
                     }
                     "interview_question" -> {
                         OutlinedTextField(value = field1, onValueChange = { field1 = it }, label = { Text(stringResource(R.string.label_iq_category)) }, modifier = Modifier.fillMaxWidth())
-                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_iq_question)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
-                        OutlinedTextField(value = field3, onValueChange = { field3 = it; field3Error = false }, label = { Text(stringResource(R.string.label_iq_answer)) }, modifier = Modifier.fillMaxWidth(), minLines = 5, isError = field3Error)
+                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false; saveError = null }, label = { Text(stringResource(R.string.label_iq_question)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
+                        OutlinedTextField(value = field3, onValueChange = { field3 = it; field3Error = false; saveError = null }, label = { Text(stringResource(R.string.label_iq_answer)) }, modifier = Modifier.fillMaxWidth(), minLines = 5, isError = field3Error)
                         OutlinedTextField(value = field4, onValueChange = { field4 = it }, label = { Text(stringResource(R.string.label_iq_better)) }, modifier = Modifier.fillMaxWidth(), minLines = 5)
                     }
                     "experience" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_exp_company)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
-                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_exp_job)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_exp_company)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false; saveError = null }, label = { Text(stringResource(R.string.label_exp_job)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
 
                         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = field7 == "true", onCheckedChange = { field7 = it.toString() })
@@ -222,8 +237,8 @@ fun AddCareerScreen(
                         OutlinedTextField(value = field4, onValueChange = { field4 = it }, label = { Text(stringResource(R.string.label_exp_outcome)) }, modifier = Modifier.fillMaxWidth(), minLines = 3)
                     }
                     "education" -> {
-                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false }, label = { Text(stringResource(R.string.label_edu_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
-                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false }, label = { Text(stringResource(R.string.label_edu_inst)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
+                        OutlinedTextField(value = field1, onValueChange = { field1 = it; field1Error = false; saveError = null }, label = { Text(stringResource(R.string.label_edu_name)) }, modifier = Modifier.fillMaxWidth(), isError = field1Error)
+                        OutlinedTextField(value = field2, onValueChange = { field2 = it; field2Error = false; saveError = null }, label = { Text(stringResource(R.string.label_edu_inst)) }, modifier = Modifier.fillMaxWidth(), isError = field2Error)
 
                         DatePickerField(label = stringResource(R.string.label_start_date), value = field5, onValueChange = { field5 = it }, dateFormat = dateFormat)
                         DatePickerField(label = stringResource(R.string.label_end_date), value = field6, onValueChange = { field6 = it }, dateFormat = dateFormat)
@@ -237,85 +252,103 @@ fun AddCareerScreen(
 
                 Button(
                     onClick = {
-                        if (validate()) {
+                        if (validate() && !isSaving) {
+                            isSaving = true
+                            saveError = null
                             coroutineScope.launch {
-                                val success = when (id) {
-                                    "cover_letter" -> {
-                                        if (itemId > 0) {
-                                            viewModel.getCoverLetterById(itemId)?.let { viewModel.updateCoverLetter(it.copy(title = field1, companyName = field2, memo = field3)) } ?: false
-                                        } else {
-                                            viewModel.saveCoverLetter(field1, field2, field3) > 0
+                                try {
+                                    val success = when (id) {
+                                        "cover_letter" -> {
+                                            if (itemId > 0) {
+                                                viewModel.getCoverLetterById(itemId)?.let { viewModel.updateCoverLetter(it.copy(title = field1, companyName = field2, memo = field3)) } ?: false
+                                            } else {
+                                                viewModel.saveCoverLetter(field1, field2, field3) > 0
+                                            }
                                         }
-                                    }
-                                    "resume" -> {
-                                        if (itemId > 0) {
-                                            viewModel.getResumeById(itemId)?.let { viewModel.updateResume(it.copy(title = field1, version = field2, memo = field3)) } ?: false
-                                        } else {
-                                            viewModel.saveResume(field1, field2, field3) > 0
+                                        "resume" -> {
+                                            if (itemId > 0) {
+                                                viewModel.getResumeById(itemId)?.let { viewModel.updateResume(it.copy(title = field1, version = field2, memo = field3)) } ?: false
+                                            } else {
+                                                viewModel.saveResume(field1, field2, field3) > 0
+                                            }
                                         }
-                                    }
-                                    "portfolio" -> {
-                                        if (itemId > 0) {
-                                            viewModel.getPortfolioById(itemId)?.let { viewModel.updatePortfolio(it.copy(title = field1, url = field2, memo = field3)) } ?: false
-                                        } else {
-                                            viewModel.savePortfolio(field1, field2, field3) > 0
+                                        "portfolio" -> {
+                                            if (itemId > 0) {
+                                                viewModel.getPortfolioById(itemId)?.let { viewModel.updatePortfolio(it.copy(title = field1, url = field2, memo = field3)) } ?: false
+                                            } else {
+                                                viewModel.savePortfolio(field1, field2, field3) > 0
+                                            }
                                         }
-                                    }
-                                    "project" -> {
-                                        if (itemId > 0) {
-                                            viewModel.getProjectById(itemId)?.let { viewModel.updateProject(it.copy(name = field1, role = field2, techStack = field3, description = field4, problem = field5, outcome = field6)) } ?: false
-                                        } else {
-                                            viewModel.saveProject(field1, field2, field3, field4, field5, field6) > 0
+                                        "project" -> {
+                                            if (itemId > 0) {
+                                                viewModel.getProjectById(itemId)?.let { viewModel.updateProject(it.copy(name = field1, role = field2, techStack = field3, description = field4, problem = field5, outcome = field6)) } ?: false
+                                            } else {
+                                                viewModel.saveProject(field1, field2, field3, field4, field5, field6) > 0
+                                            }
                                         }
-                                    }
-                                    "certification" -> {
-                                        val acquiredDate = field5.toLongOrNull()?.let { Date(it) }
-                                        if (itemId > 0) {
-                                            viewModel.getCertificationById(itemId)?.let { viewModel.updateCertification(it.copy(name = field1, issuer = field2, score = field3, grade = field4, acquisitionDate = acquiredDate)) } ?: false
-                                        } else {
-                                            viewModel.saveCertification(field1, field2, field3, field4, acquiredDate) > 0
+                                        "certification" -> {
+                                            val acquiredDate = field5.toLongOrNull()?.let { Date(it) }
+                                            if (itemId > 0) {
+                                                viewModel.getCertificationById(itemId)?.let { viewModel.updateCertification(it.copy(name = field1, issuer = field2, score = field3, grade = field4, acquisitionDate = acquiredDate)) } ?: false
+                                            } else {
+                                                viewModel.saveCertification(field1, field2, field3, field4, acquiredDate) > 0
+                                            }
                                         }
-                                    }
-                                    "interview_question" -> {
-                                        if (itemId > 0) {
-                                            viewModel.getInterviewQuestionById(itemId)?.let { viewModel.updateInterviewQuestion(it.copy(category = field1, question = field2, myAnswer = field3, betterAnswer = field4)) } ?: false
-                                        } else {
-                                            viewModel.saveInterviewQuestion(field1, field2, field3, field4) > 0
+                                        "interview_question" -> {
+                                            if (itemId > 0) {
+                                                viewModel.getInterviewQuestionById(itemId)?.let { viewModel.updateInterviewQuestion(it.copy(category = field1, question = field2, myAnswer = field3, betterAnswer = field4)) } ?: false
+                                            } else {
+                                                viewModel.saveInterviewQuestion(field1, field2, field3, field4) > 0
+                                            }
                                         }
-                                    }
-                                    "experience" -> {
-                                        val start = field5.toLongOrNull()?.let { Date(it) } ?: Date()
-                                        val end = field6.toLongOrNull()?.let { Date(it) }
-                                        val current = field7 == "true"
-                                        if (itemId > 0) {
-                                            viewModel.getExperienceById(itemId)?.let { viewModel.updateExperience(it.copy(companyName = field1, jobTitle = field2, description = field3, outcome = field4, startDate = start, endDate = if (current) null else end, isCurrent = current)) } ?: false
-                                        } else {
-                                            viewModel.saveExperience(field1, field2, field3, field4, start, end, current) > 0
+                                        "experience" -> {
+                                            val start = field5.toLongOrNull()?.let { Date(it) } ?: Date()
+                                            val end = field6.toLongOrNull()?.let { Date(it) }
+                                            val current = field7 == "true"
+                                            if (itemId > 0) {
+                                                viewModel.getExperienceById(itemId)?.let { viewModel.updateExperience(it.copy(companyName = field1, jobTitle = field2, description = field3, outcome = field4, startDate = start, endDate = if (current) null else end, isCurrent = current)) } ?: false
+                                            } else {
+                                                viewModel.saveExperience(field1, field2, field3, field4, start, end, current) > 0
+                                            }
                                         }
-                                    }
-                                    "education" -> {
-                                        val start = field5.toLongOrNull()?.let { Date(it) } ?: Date()
-                                        val end = field6.toLongOrNull()?.let { Date(it) }
-                                        if (itemId > 0) {
-                                            viewModel.getEducationById(itemId)?.let { viewModel.updateEducation(it.copy(name = field1, institution = field2, status = field3, description = field4, startDate = start, endDate = end)) } ?: false
-                                        } else {
-                                            viewModel.saveEducation(field1, field2, field3, field4, start, end) > 0
+                                        "education" -> {
+                                            val start = field5.toLongOrNull()?.let { Date(it) } ?: Date()
+                                            val end = field6.toLongOrNull()?.let { Date(it) }
+                                            if (itemId > 0) {
+                                                viewModel.getEducationById(itemId)?.let { viewModel.updateEducation(it.copy(name = field1, institution = field2, status = field3, description = field4, startDate = start, endDate = end)) } ?: false
+                                            } else {
+                                                viewModel.saveEducation(field1, field2, field3, field4, start, end) > 0
+                                            }
                                         }
+                                        else -> false
                                     }
-                                    else -> false
-                                }
-                                if (success) {
-                                    viewModel.removeDraft(id, itemId)
-                                    onBack()
+                                    if (success) {
+                                        viewModel.removeDraft(id, itemId)
+                                        Toast.makeText(context, "기록이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                                        isSaving = false
+                                        onBack()
+                                    } else {
+                                        isSaving = false
+                                        saveError = "저장하지 못했습니다. 입력 내용을 확인 후 다시 시도해 주세요."
+                                    }
+                                } catch (e: Exception) {
+                                    isSaving = false
+                                    saveError = "저장 중 오류가 발생했습니다. 다시 시도해 주세요."
                                 }
                             }
                         }
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-                    enabled = isFormValid
+                    enabled = isFormValid && !isSaving
                 ) {
-                    Text(stringResource(if (itemId > 0) R.string.btn_save_complete else R.string.btn_save), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    if (isSaving) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text("저장 중...", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    } else {
+                        Text(stringResource(if (itemId > 0) R.string.btn_save_complete else R.string.btn_save), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }

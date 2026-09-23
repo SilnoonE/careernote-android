@@ -44,14 +44,12 @@ fun CareerTipsScreen(
                     Text(
                         stringResource(R.string.career_tips_title),
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.padding(top = 8.dp)
+                        onClick = onBack
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
@@ -61,7 +59,8 @@ fun CareerTipsScreen(
                 )
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -239,14 +238,12 @@ fun CareerTipsDetailScreen(
                 title = {
                     Text(
                         text = title,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 8.dp) // Lower for stability
+                        fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.padding(top = 8.dp)
+                        onClick = onBack
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
@@ -255,7 +252,8 @@ fun CareerTipsDetailScreen(
                     containerColor = color.copy(alpha = 0.1f)
                 )
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Box(
             modifier = Modifier

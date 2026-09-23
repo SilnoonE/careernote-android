@@ -121,7 +121,8 @@ fun MainContainer(
         bottomBar = {
             Surface(
                 tonalElevation = 8.dp,
-                shadowElevation = 16.dp
+                shadowElevation = 16.dp,
+                modifier = Modifier.navigationBarsPadding()
             ) {
                 Column {
                     AdMobBanner()

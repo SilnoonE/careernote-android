@@ -29,11 +29,19 @@ data class Interview(
     val method: String = "", // 예: 다대다, 일대일
     val result: String = "",
     val memo: String = "",
-    val review: String = "", // 복기
+    val review: String = "", // 복기 / 보완할 답변
     val strengths: String = "", // 잘한 점
-    val weaknesses: String = "", // 아쉬운 점
-    val preparations: String = "" // 다음 준비사항
-)
+    val weaknesses: String = "", // 아쉬운 점 / 어려웠던 질문
+    val preparations: String = "", // 면접 전 준비 메모
+    val nextPreparations: String = "", // 면접 후 다음 준비사항
+    val isCompleted: Boolean = false,
+    val reviewCompletedAt: Date? = null // 명시적 복기 완료 시각
+) {
+    fun isReviewCompleted(): Boolean {
+        if (reviewCompletedAt != null) return true
+        return strengths.isNotBlank() || weaknesses.isNotBlank() || review.isNotBlank() || nextPreparations.isNotBlank()
+    }
+}
 
 @Entity(
     tableName = "interview_questions",

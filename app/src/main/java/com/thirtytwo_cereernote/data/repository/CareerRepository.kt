@@ -65,4 +65,18 @@ class CareerRepository @Inject constructor(
     suspend fun insertEducation(item: Education) = careerDao.insertEducation(item)
     suspend fun updateEducation(item: Education) = careerDao.updateEducation(item)
     suspend fun deleteEducation(item: Education) = careerDao.deleteEducation(item)
+
+    // Practice Sessions
+    suspend fun insertPracticeSession(session: PracticeSession) = careerDao.insertPracticeSession(session)
+    suspend fun updatePracticeSession(session: PracticeSession) = careerDao.updatePracticeSession(session)
+    suspend fun getPracticeSessionById(id: Long) = careerDao.getPracticeSessionById(id)
+    suspend fun getUnfinishedPracticeSession() = careerDao.getUnfinishedPracticeSession()
+    fun getAllPracticeSessions() = careerDao.getAllPracticeSessions()
+    suspend fun deletePracticeSession(session: PracticeSession) = careerDao.deletePracticeSession(session)
+
+    // Practice Question Results
+    suspend fun insertPracticeQuestionResult(result: PracticeQuestionResult) = careerDao.insertPracticeQuestionResult(result)
+    suspend fun updatePracticeQuestionResult(result: PracticeQuestionResult) = careerDao.updatePracticeQuestionResult(result)
+    fun getPracticeQuestionResultsBySession(sessionId: Long) = careerDao.getPracticeQuestionResultsBySession(sessionId)
+    suspend fun getPracticeQuestionResultsListBySession(sessionId: Long) = careerDao.getPracticeQuestionResultsListBySession(sessionId)
 }

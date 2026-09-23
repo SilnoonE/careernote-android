@@ -24,7 +24,26 @@ fun CareerNoteNavGraph(navController: NavHostController) {
                 },
                 onAddApplicationClick = {
                     navController.navigate("add_application")
+                },
+                onWeeklySummaryClick = {
+                    navController.navigate("weekly_summary")
+                },
+                onStartPracticeClick = {
+                    navController.navigate("practice")
                 }
+            )
+        }
+        composable("weekly_summary") {
+            WeeklySummaryScreen(
+                onBack = { navController.popBackStack() },
+                onApplicationClick = { appId -> navController.navigate("application_detail/$appId") },
+                onAddApplicationClick = { navController.navigate("add_application") },
+                onStartPracticeClick = { navController.navigate("practice") }
+            )
+        }
+        composable("practice") {
+            PracticeScreen(
+                onBack = { navController.popBackStack() }
             )
         }
         composable(Screen.Applications.route) {

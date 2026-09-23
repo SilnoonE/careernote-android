@@ -15,8 +15,8 @@ android {
         applicationId = "com.thirtytwo_cereernote"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "4"
+        versionCode = 7
+        versionName = "7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

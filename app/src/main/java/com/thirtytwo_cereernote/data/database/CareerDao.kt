@@ -153,6 +153,40 @@ interface CareerDao {
     @Query("DELETE FROM interview_questions") suspend fun deleteAllInterviewQuestions()
     @Query("DELETE FROM career_experiences") suspend fun deleteAllExperiences()
     @Query("DELETE FROM educations") suspend fun deleteAllEducations()
+    @Query("DELETE FROM practice_sessions") suspend fun deleteAllPracticeSessions()
+    @Query("DELETE FROM practice_question_results") suspend fun deleteAllPracticeQuestionResults()
+
+    // Practice Sessions CRUD
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPracticeSession(session: PracticeSession): Long
+
+    @Update
+    suspend fun updatePracticeSession(session: PracticeSession)
+
+    @Query("SELECT * FROM practice_sessions WHERE id = :id")
+    suspend fun getPracticeSessionById(id: Long): PracticeSession?
+
+    @Query("SELECT * FROM practice_sessions WHERE isCompleted = 0 ORDER BY startedAt DESC LIMIT 1")
+    suspend fun getUnfinishedPracticeSession(): PracticeSession?
+
+    @Query("SELECT * FROM practice_sessions ORDER BY startedAt DESC")
+    fun getAllPracticeSessions(): Flow<List<PracticeSession>>
+
+    @Delete
+    suspend fun deletePracticeSession(session: PracticeSession)
+
+    // Practice Question Results CRUD
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPracticeQuestionResult(result: PracticeQuestionResult): Long
+
+    @Update
+    suspend fun updatePracticeQuestionResult(result: PracticeQuestionResult)
+
+    @Query("SELECT * FROM practice_question_results WHERE sessionId = :sessionId ORDER BY updatedAt ASC")
+    fun getPracticeQuestionResultsBySession(sessionId: Long): Flow<List<PracticeQuestionResult>>
+
+    @Query("SELECT * FROM practice_question_results WHERE sessionId = :sessionId ORDER BY updatedAt ASC")
+    suspend fun getPracticeQuestionResultsListBySession(sessionId: Long): List<PracticeQuestionResult>
 
     @Transaction
     suspend fun clearAll() {
@@ -164,5 +198,7 @@ interface CareerDao {
         deleteAllInterviewQuestions()
         deleteAllExperiences()
         deleteAllEducations()
+        deleteAllPracticeSessions()
+        deleteAllPracticeQuestionResults()
     }
 }

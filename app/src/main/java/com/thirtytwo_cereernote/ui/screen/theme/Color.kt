@@ -2,27 +2,33 @@ package com.thirtytwo_cereernote.ui.screen.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Blue80 = Color(0xFF3F8CFF)
-val BlueGrey80 = Color(0xFF8E9AA8)
-val LightBlue80 = Color(0xFF8B5CF6)
+// Original Light Palette
+val Blue80 = Color(0xFF90CAF9)
+val BlueGrey80 = Color(0xFF64748B)
+val LightBlue80 = Color(0xFF0EA5E9)
 
-val Blue40 = Color(0xFF0061A4)
-val BlueGrey40 = Color(0xFF535F70)
-val LightBlue40 = Color(0xFF485E7B)
+val Blue40 = Color(0xFF1E40AF)
+val BlueGrey40 = Color(0xFF475569)
+val LightBlue40 = Color(0xFF0284C7)
 
-val BackgroundLight = Color(0xFFF2F4F7)
-val BackgroundDark = Color(0xFF0D0E12)
+val BackgroundLight = Color(0xFFF8FAFC)
 val CardLight = Color(0xFFFFFFFF)
-val CardDark = Color(0xFF171923)
+val OutlineLight = Color(0xFFE2E8F0)
 
-val OutlineLight = Color(0xFFD1D5DB)
-val OutlineDark = Color(0xFF262936)
+// Muted, Eye-friendly Dark Palette (No fluorescent/neon colors)
+val PrimaryDark = Color(0xFF818CF8) // Soft pastel indigo
+val OnPrimaryDark = Color(0xFF0F172A)
+val PrimaryContainerDark = Color(0xFF1E1B4B) // Deep muted indigo-slate
+val OnPrimaryContainerDark = Color(0xFFC7D2FE) // Soft light indigo text
 
-val OnBackgroundDark = Color(0xFFF1F5F9)
-val OnSurfaceDark = Color(0xFFE2E8F0)
-val PrimaryContainerDark = Color(0xFF1E2640)
-val OnPrimaryContainerDark = Color(0xFFEFF6FF)
+val SecondaryDark = Color(0xFF94A3B8) // Soft slate grey
+val BackgroundDark = Color(0xFF0F172A) // Comfortable dark slate background
+val CardDark = Color(0xFF1E293B) // Balanced slate card background
+val OutlineDark = Color(0xFF334155) // Subtle dark outline
 
-val SuccessGreen = Color(0xFF4CAF50)
-val PendingOrange = Color(0xFFFF9800)
-val FailRed = Color(0xFFF44336)
+val OnBackgroundDark = Color(0xFFF1F5F9) // Comfortable off-white
+val OnSurfaceDark = Color(0xFFF8FAFC)
+
+val SuccessGreen = Color(0xFF34D399) // Soft mint green
+val PendingOrange = Color(0xFFFB923C) // Soft peach orange
+val FailRed = Color(0xFFF87171) // Soft rose red

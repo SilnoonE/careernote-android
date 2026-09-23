@@ -91,6 +91,12 @@ class PreferenceRepository @Inject constructor(
         }
     }
 
+    suspend fun clearAllPreferences() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     suspend fun setLanguage(language: String) {
         context.dataStore.edit { preferences ->
             preferences[languageKey] = language

@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import java.util.Date
 import javax.inject.Inject
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
 
 data class CareerSummary(
     val counts: Map<String, Int> = emptyMap()
@@ -39,7 +40,7 @@ class CareerViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository
 ) : ViewModel() {
 
-    val drafts = preferenceRepository.draftsJson.map { 
+    val drafts = preferenceRepository.draftsJson.map {
         try {
             Json.decodeFromString<Map<String, Draft>>(it)
         } catch (e: Exception) {
@@ -141,11 +142,11 @@ class CareerViewModel @Inject constructor(
     // Project
     suspend fun saveProject(name: String, role: String, tech: String, desc: String, prob: String = "", outcome: String = ""): Long = withContext(Dispatchers.IO) {
         val id = repository.insertProject(Project(
-            name = name, 
-            role = role, 
-            techStack = tech, 
-            description = desc, 
-            problem = prob, 
+            name = name,
+            role = role,
+            techStack = tech,
+            description = desc,
+            problem = prob,
             outcome = outcome,
             updatedAt = Date()
         ))
@@ -311,7 +312,7 @@ class CareerViewModel @Inject constructor(
         repository.getAllEducations()
     ) { flows ->
         val allItems = mutableListOf<RecentActivity>()
-        
+
         (flows[0] as List<CoverLetter>).forEach { allItems.add(RecentActivity(it.id, "cover_letter", "자기소개서", it.title, it.updatedAt, "cover_letter", R.string.career_cover_letter)) }
         (flows[1] as List<Resume>).forEach { allItems.add(RecentActivity(it.id, "resume", "이력서", it.title, it.updatedAt, "resume", R.string.career_resume)) }
         (flows[2] as List<Portfolio>).forEach { allItems.add(RecentActivity(it.id, "portfolio", "포트폴리오", it.title, it.updatedAt, "portfolio", R.string.career_portfolio)) }
@@ -320,7 +321,7 @@ class CareerViewModel @Inject constructor(
         (flows[5] as List<InterviewQuestion>).forEach { allItems.add(RecentActivity(it.id, "interview_question", "면접 질문", it.question, it.updatedAt, "interview_question", R.string.career_interview_question)) }
         (flows[6] as List<CareerExperience>).forEach { allItems.add(RecentActivity(it.id, "experience", "경력", it.companyName, it.updatedAt, "experience", R.string.career_experience)) }
         (flows[7] as List<Education>).forEach { allItems.add(RecentActivity(it.id, "education", "교육", it.institution, it.updatedAt, "education", R.string.career_education)) }
-        
+
         allItems.sortedByDescending { it.date }.take(10)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }

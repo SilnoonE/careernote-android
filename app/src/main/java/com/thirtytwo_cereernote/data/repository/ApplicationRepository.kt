@@ -13,6 +13,7 @@ class ApplicationRepository @Inject constructor(
     private val applicationDao: ApplicationDao
 ) {
     val allApplications: Flow<List<Application>> = applicationDao.getAllApplications()
+    val allInterviews: Flow<List<com.thirtytwo_cereernote.data.model.Interview>> = applicationDao.getAllInterviews()
 
     suspend fun getApplicationById(id: Long): Application? = applicationDao.getApplicationById(id)
 
@@ -22,19 +23,19 @@ class ApplicationRepository @Inject constructor(
 
     suspend fun deleteApplication(application: Application) = applicationDao.deleteApplication(application)
 
-    fun getStatusHistories(applicationId: Long): Flow<List<ApplicationStatusHistory>> = 
+    fun getStatusHistories(applicationId: Long): Flow<List<ApplicationStatusHistory>> =
         applicationDao.getStatusHistories(applicationId)
 
-    fun getAllStatusHistories(): Flow<List<ApplicationStatusHistory>> = 
+    fun getAllStatusHistories(): Flow<List<ApplicationStatusHistory>> =
         applicationDao.getAllStatusHistories()
 
-    suspend fun updateStatus(applicationId: Long, newStatus: ApplicationStatus, memo: String = "") = 
+    suspend fun updateStatus(applicationId: Long, newStatus: ApplicationStatus, memo: String = "") =
         applicationDao.updateStatusWithHistory(applicationId, newStatus, memo)
 
     suspend fun insertStatusHistory(history: ApplicationStatusHistory) =
         applicationDao.insertStatusHistory(history)
 
-    suspend fun updateFavorite(id: Long, isFavorite: Boolean) = 
+    suspend fun updateFavorite(id: Long, isFavorite: Boolean) =
         applicationDao.updateFavorite(id, isFavorite, java.util.Date())
 
     fun getInterviewsByApplicationId(applicationId: Long) = applicationDao.getInterviewsByApplicationId(applicationId)

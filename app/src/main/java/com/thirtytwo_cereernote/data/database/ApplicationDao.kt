@@ -10,6 +10,9 @@ interface ApplicationDao {
     @Query("SELECT * FROM applications ORDER BY appliedDate DESC")
     fun getAllApplications(): Flow<List<Application>>
 
+    @Query("SELECT * FROM applications ORDER BY appliedDate DESC")
+    suspend fun getAllApplicationsList(): List<Application>
+
     @Query("SELECT * FROM applications WHERE id = :id")
     suspend fun getApplicationById(id: Long): Application?
 
@@ -51,7 +54,7 @@ interface ApplicationDao {
     @Transaction
     suspend fun updateStatusWithHistory(applicationId: Long, newStatus: com.thirtytwo_cereernote.data.model.ApplicationStatus, memo: String = "") {
         val application = getApplicationById(applicationId) ?: return
-        
+
         // Prevent duplicate history for the same status if it's the current one
         if (application.currentStatus == newStatus) return
 
@@ -61,18 +64,18 @@ interface ApplicationDao {
             // But we should be more specific. If it's APPLY_COMPLETED or later, it's submitted.
             // Let's use a helper from enum if possible or just check here.
         }
-        
+
         // Refined submission logic
-        val isSubmissionStatus = newStatus != com.thirtytwo_cereernote.data.model.ApplicationStatus.INTERESTED && 
+        val isSubmissionStatus = newStatus != com.thirtytwo_cereernote.data.model.ApplicationStatus.INTERESTED &&
                                  newStatus != com.thirtytwo_cereernote.data.model.ApplicationStatus.APPLY_PLANNED &&
                                  newStatus != com.thirtytwo_cereernote.data.model.ApplicationStatus.CANCELLED
-                                 
+
         if (submittedDate == null && isSubmissionStatus) {
             submittedDate = java.util.Date()
         }
 
         updateApplication(application.copy(
-            currentStatus = newStatus, 
+            currentStatus = newStatus,
             submittedDate = submittedDate,
             updatedAt = java.util.Date()
         ))
@@ -86,6 +89,9 @@ interface ApplicationDao {
     suspend fun deleteAllStatusHistories()
 
     // Interview CRUD
+    @Query("SELECT * FROM interviews ORDER BY interviewDate ASC")
+    fun getAllInterviews(): Flow<List<com.thirtytwo_cereernote.data.model.Interview>>
+
     @Query("SELECT * FROM interviews WHERE applicationId = :applicationId ORDER BY interviewDate ASC")
     fun getInterviewsByApplicationId(applicationId: Long): Flow<List<com.thirtytwo_cereernote.data.model.Interview>>
 

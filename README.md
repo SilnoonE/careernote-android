@@ -1,5 +1,17 @@
 # CareerNote · 커리어노트
 
+## 최신 업데이트 · 2026-09-24
+
+행동 중심 홈, 결과 대기·표본 수 통계, 주간 요약, 내 기록 기반 면접 연습과 Room v7을 공개했습니다.
+
+- **[상세 변경 기록과 실제 코드 발췌](docs/UPDATE_2026-09-24.md)**
+- [주간 요약 구현](app/src/main/java/com/thirtytwo_cereernote/viewmodel/WeeklySummaryViewModel.kt)
+- [면접 연습 구현](app/src/main/java/com/thirtytwo_cereernote/viewmodel/PracticeViewModel.kt)
+- [통계 계산기](app/src/main/java/com/thirtytwo_cereernote/util/ApplicationStatsCalculator.kt)
+- [DB 마이그레이션](app/src/main/java/com/thirtytwo_cereernote/data/database/AppDatabase.kt)
+
+개발 스냅샷이며 전체 기능의 출시 검증 완료를 의미하지 않습니다. 최신 검증 범위와 알려진 제한사항은 위 변경 기록에 정리했습니다.
+
 Android 취업 준비·커리어 기록 앱의 공개용 소스 스냅샷과 개발 기록입니다.
 
 ## 기능과 기술

@@ -33,5 +33,6 @@ data class Application(
     val portfolioSnapshot: String? = null,
     val submittedDate: Date? = null,
     val attachedPdfPath: String? = null,
-    val attachedPdfName: String? = null
+    val attachedPdfName: String? = null,
+    val requiredDocTypes: String = "RESUME,COVER_LETTER"
 )
